@@ -70,15 +70,15 @@ class Memory:
             raise ValueError("Memory initialization value count exceed memory depth ({} > {})"
                              .format(len(self.init), self.depth))
 
-        try:
-            for addr in range(len(self._array)):
+        for addr in range(len(self._array)):
+            try:
                 if addr < len(self._init):
                     self._array[addr].reset = operator.index(self._init[addr])
                 else:
                     self._array[addr].reset = 0
-        except TypeError as e:
-            raise TypeError("Memory initialization value at address {:x}: {}"
-                            .format(addr, e)) from None
+            except TypeError as e:
+                raise TypeError("Memory initialization value at address {:x}: {}"
+                                .format(addr, e)) from None
 
     def read_port(self, *, src_loc_at=0, **kwargs):
         """Get a read port.

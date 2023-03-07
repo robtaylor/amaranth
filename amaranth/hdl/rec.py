@@ -32,7 +32,7 @@ class Layout:
                                 "(name, shape) or (name, shape, direction)"
                                 .format(field))
             if len(field) == 2:
-                name, shape = field
+                name, shape = field[:2]
                 direction = DIR_NONE
                 if isinstance(shape, list):
                     shape = Layout.cast(shape)
@@ -164,7 +164,7 @@ class Record(ValueCastable):
             })
         else:
             try:
-                return Value.__getitem__(self, item)
+                return Value.__getitem__(Value.cast(self), item)
             except KeyError:
                 if self.name is None:
                     reference = "Unnamed record"
@@ -240,9 +240,10 @@ class Record(ValueCastable):
                 subord_items.append(subord.fields[field])
 
             if isinstance(shape, Layout):
+                record = Record(item)
                 sub_include = include[field] if include and field in include else None
                 sub_exclude = exclude[field] if exclude and field in exclude else None
-                stmts += item.connect(*subord_items, include=sub_include, exclude=sub_exclude)
+                stmts += record.connect(*subord_items, include=sub_include, exclude=sub_exclude)
             else:
                 if direction == DIR_FANOUT:
                     stmts += [sub_item.eq(item) for sub_item in subord_items]

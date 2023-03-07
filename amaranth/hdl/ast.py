@@ -8,7 +8,6 @@ from itertools import chain
 
 from .. import tracer
 from .._utils import *
-from .._utils import _ignore_deprecated
 from .._unused import *
 
 
@@ -1362,13 +1361,15 @@ class Sample(Value):
         if not (self.domain is None or isinstance(self.domain, str)):
             raise TypeError("Domain name must be a string or None, not {!r}"
                             .format(self.domain))
-
+    @deprecated
     def shape(self):
         return self.value.shape()
 
+    @deprecated
     def _rhs_signals(self):
         return SignalSet((self,))
 
+    @deprecated
     def __repr__(self):
         return "(sample {!r} @ {}[{}])".format(
             self.value, "<default>" if self.domain is None else self.domain, self.clocks)
@@ -1377,29 +1378,25 @@ class Sample(Value):
 # TODO(amaranth-0.5): remove
 @deprecated("instead of using `Past`, create a register explicitly")
 def Past(expr, clocks=1, domain=None):
-    with _ignore_deprecated():
-        return Sample(expr, clocks, domain)
+    return Sample(expr, clocks, domain)
 
 
 # TODO(amaranth-0.5): remove
 @deprecated("instead of using `Stable`, create registers and comparisons explicitly")
 def Stable(expr, clocks=0, domain=None):
-    with _ignore_deprecated():
-        return Sample(expr, clocks + 1, domain) == Sample(expr, clocks, domain)
+    return Sample(expr, clocks + 1, domain) == Sample(expr, clocks, domain)
 
 
 # TODO(amaranth-0.5): remove
 @deprecated("instead of using `Rose`, create registers and comparisons explicitly")
 def Rose(expr, clocks=0, domain=None):
-    with _ignore_deprecated():
-        return ~Sample(expr, clocks + 1, domain) & Sample(expr, clocks, domain)
+    return ~Sample(expr, clocks + 1, domain) & Sample(expr, clocks, domain)
 
 
 # TODO(amaranth-0.5): remove
 @deprecated("instead of using `Fell`, create registers and comparisons explicitly")
 def Fell(expr, clocks=0, domain=None):
-    with _ignore_deprecated():
-        return Sample(expr, clocks + 1, domain) & ~Sample(expr, clocks, domain)
+    return Sample(expr, clocks + 1, domain) & ~Sample(expr, clocks, domain)
 
 
 @final

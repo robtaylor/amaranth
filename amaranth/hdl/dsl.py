@@ -22,8 +22,10 @@ class SyntaxError(Exception):
 class SyntaxWarning(Warning):
     pass
 
-
 class _ModuleBuilderProxy:
+    _builder: '_ModuleBuilderRoot'
+    _depth: int
+
     def __init__(self, builder, depth):
         object.__setattr__(self, "_builder", builder)
         object.__setattr__(self, "_depth", depth)
@@ -80,6 +82,8 @@ class _ModuleBuilderRoot:
 
 
 class _ModuleBuilderSubmodules:
+    _builder: _ModuleBuilderRoot
+
     def __init__(self, builder):
         object.__setattr__(self, "_builder", builder)
 
@@ -102,6 +106,8 @@ class _ModuleBuilderSubmodules:
 
 
 class _ModuleBuilderDomainSet:
+    _builder: _ModuleBuilderRoot
+
     def __init__(self, builder):
         object.__setattr__(self, "_builder", builder)
 
@@ -230,8 +236,8 @@ class Module(_ModuleBuilderRoot, Elaboratable):
             "src_loc":  src_loc,
             "src_locs": [],
         })
+        _outer_case, self._statements = self._statements, []
         try:
-            _outer_case, self._statements = self._statements, []
             self.domain._depth += 1
             yield
             self._flush_ctrl()
@@ -250,8 +256,8 @@ class Module(_ModuleBuilderRoot, Elaboratable):
         if_data = self._get_ctrl("If")
         if if_data is None or if_data["depth"] != self.domain._depth:
             raise SyntaxError("Elif without preceding If")
+        _outer_case, self._statements = self._statements, []
         try:
-            _outer_case, self._statements = self._statements, []
             self.domain._depth += 1
             yield
             self._flush_ctrl()
@@ -269,8 +275,8 @@ class Module(_ModuleBuilderRoot, Elaboratable):
         if_data = self._get_ctrl("If")
         if if_data is None or if_data["depth"] != self.domain._depth:
             raise SyntaxError("Else without preceding If/Elif")
+        _outer_case, self._statements = self._statements, []
         try:
-            _outer_case, self._statements = self._statements, []
             self.domain._depth += 1
             yield
             self._flush_ctrl()
@@ -334,8 +340,9 @@ class Module(_ModuleBuilderRoot, Elaboratable):
                                   SyntaxWarning, stacklevel=3)
                     continue
                 new_patterns = (*new_patterns, pattern.value)
+
+        _outer_case, self._statements = self._statements, []
         try:
-            _outer_case, self._statements = self._statements, []
             self._ctrl_context = None
             yield
             self._flush_ctrl()
@@ -392,8 +399,9 @@ class Module(_ModuleBuilderRoot, Elaboratable):
             raise NameError("FSM state '{}' is already defined".format(name))
         if name not in fsm_data["encoding"]:
             fsm_data["encoding"][name] = len(fsm_data["encoding"])
+
+        _outer_case, self._statements = self._statements, []
         try:
-            _outer_case, self._statements = self._statements, []
             self._ctrl_context = None
             yield
             self._flush_ctrl()
