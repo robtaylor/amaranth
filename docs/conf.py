@@ -19,6 +19,8 @@ extensions = [
     "sphinx_rtd_theme",
     "sphinxcontrib.platformpicker",
     "sphinxcontrib.yowasp_wavedrom",
+    "sphinx_markdown_builder",
+    "rst2pdf.pdfbuilder",
 ]
 
 with open(".gitignore") as f:
@@ -82,3 +84,7 @@ linkcheck_anchors_ignore_for_url = [
 # unrelated tests.
 import amaranth._unused
 amaranth._unused.MustUse._MustUse__silence = True
+
+pdf_documents = [
+    ('index', 'amaranth', project, ' Amaranth project contributors'),
+]

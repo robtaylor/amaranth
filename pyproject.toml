@@ -79,6 +79,9 @@ docs = [
   "sphinxcontrib-yowasp-wavedrom==1.8", # exact version to avoid changes in rendering
   "sphinx-rtd-theme~=2.0",
   "sphinx-autobuild",
+  "sphinx-markdown-builder>=0.6.7",
+  "rst2pdf>=0.102",
+  "markdown2>=2.5.2",
 ]
 examples = [
   # pin to last commit with py3.8 support
@@ -96,6 +99,17 @@ test-docs.cmd = "sphinx-build -b doctest docs/ docs/_build"
 document.cmd = "sphinx-build docs/ docs/_build/ -W --keep-going"
 document-live.cmd = "sphinx-autobuild docs/ docs/_build/ --watch amaranth"
 document-linkcheck.cmd = "sphinx-build docs/ docs/_linkcheck/ -b linkcheck"
+document-md.composite = [
+    "sphinx-build -M markdown docs docs/_build --keep-going",
+    "docs/assemble-md.py docs/_build/markdown/index.md docs/amaranth",
+    "echo Assembled markdown doc in docs/amaranth.md"
+    ]
+document-pdf.composite = [
+    "sphinx-build -b pdf docs docs/_build --keep-going",
+    "cp docs/_build/amaranth.pdf docs",
+    "echo PDF documentation created at docs/amaranth.pdf"
+]
+
 
 coverage-text.cmd = "python -m coverage report"
 coverage-html.cmd = "python -m coverage html"
