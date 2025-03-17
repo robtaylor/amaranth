@@ -288,6 +288,9 @@ Reference
 
 .. autoclass:: SimulatorContext
 
+.. autoclass:: amaranth.hdl._time.Period
+   :noindex:
+
 .. autoexception:: BrokenTrigger
 
 .. autoexception:: DomainReset
