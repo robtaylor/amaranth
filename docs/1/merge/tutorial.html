@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; Amaranth language &amp; toolchain 0.6.0.dev100 documentation</title>
+  <title>Tutorial &mdash; Amaranth language &amp; toolchain 0.6.0.dev101 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/platformpicker.css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=1fc54fd2"></script>
+        <script src="_static/documentation_options.js?v=bbbdcbcb"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/platformpicker.js"></script>
@@ -41,7 +41,7 @@
               <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.6.0.dev100
+                0.6.0.dev101
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -339,10 +339,15 @@ pdm<span class="w"> </span>install
 <span class="linenos">50</span>    
 <span class="linenos">51</span>    <span class="c1"># Run simulation and generate a waveform file</span>
 <span class="linenos">52</span>    <span class="k">with</span> <span class="n">sim</span><span class="o">.</span><span class="n">write_vcd</span><span class="p">(</span><span class="s2">&quot;blinky.vcd&quot;</span><span class="p">):</span>
-<span class="linenos">53</span>        <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">1_000_000</span><span class="p">)</span>  <span class="c1"># Run for 100ms of simulated time</span>
-<span class="linenos">54</span>
-<span class="linenos">55</span><span class="c1"># How to run: pdm run python blinky.py</span>
-<span class="linenos">56</span><span class="c1"># This will generate blinky.vcd, which you can view with GTKWave</span>
+<span class="linenos">53</span>        <span class="c1"># Check if running in CI environment - run much shorter if so</span>
+<span class="linenos">54</span>        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="linenos">55</span>        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CI&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+<span class="linenos">56</span>            <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">1_000</span><span class="p">)</span>  <span class="c1"># Run for just 1μs in CI</span>
+<span class="linenos">57</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">58</span>            <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">1_000_000</span><span class="p">)</span>  <span class="c1"># Run for 100ms of simulated time</span>
+<span class="linenos">59</span>
+<span class="linenos">60</span><span class="c1"># How to run: pdm run python blinky.py</span>
+<span class="linenos">61</span><span class="c1"># This will generate blinky.vcd, which you can view with GTKWave</span>
 </pre></div>
 </div>
 </div>
@@ -818,19 +823,24 @@ pdm<span class="w"> </span>install
 <span class="linenos">71</span>    
 <span class="linenos">72</span>    <span class="n">sim</span><span class="o">.</span><span class="n">add_process</span><span class="p">(</span><span class="n">test_bench</span><span class="p">)</span>
 <span class="linenos">73</span>    
-<span class="linenos">74</span>    <span class="c1"># Run for 2 seconds (enough to see multiple blinks at 2Hz)</span>
+<span class="linenos">74</span>    <span class="c1"># Run simulation and generate a waveform file</span>
 <span class="linenos">75</span>    <span class="k">with</span> <span class="n">sim</span><span class="o">.</span><span class="n">write_vcd</span><span class="p">(</span><span class="s2">&quot;blinker_system.vcd&quot;</span><span class="p">,</span> <span class="s2">&quot;blinker_system.gtkw&quot;</span><span class="p">):</span>
-<span class="linenos">76</span>        <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">2_000_000</span><span class="p">)</span>  <span class="c1"># 2M ns = 2 seconds</span>
-<span class="linenos">77</span>        
-<span class="linenos">78</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation complete. View waveform with &#39;gtkwave blinker_system.vcd&#39;&quot;</span><span class="p">)</span>
-<span class="linenos">79</span>    
-<span class="linenos">80</span>    <span class="c1"># Generate Verilog</span>
-<span class="linenos">81</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.back</span><span class="w"> </span><span class="kn">import</span> <span class="n">verilog</span>
-<span class="linenos">82</span>    
-<span class="linenos">83</span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;blinker_system.v&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-<span class="linenos">84</span>        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">verilog</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">dut</span><span class="p">))</span>
-<span class="linenos">85</span>    
-<span class="linenos">86</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generated blinker_system.v&quot;</span><span class="p">)</span>
+<span class="linenos">76</span>        <span class="c1"># Check if running in CI environment - run much shorter if so</span>
+<span class="linenos">77</span>        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="linenos">78</span>        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CI&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+<span class="linenos">79</span>            <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">1_000</span><span class="p">)</span>  <span class="c1"># Run for just 1μs in CI</span>
+<span class="linenos">80</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">81</span>            <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">2_000_000</span><span class="p">)</span>  <span class="c1"># 2M ns = 2 seconds</span>
+<span class="linenos">82</span>        
+<span class="linenos">83</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation complete. View waveform with &#39;gtkwave blinker_system.vcd&#39;&quot;</span><span class="p">)</span>
+<span class="linenos">84</span>    
+<span class="linenos">85</span>    <span class="c1"># Generate Verilog</span>
+<span class="linenos">86</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.back</span><span class="w"> </span><span class="kn">import</span> <span class="n">verilog</span>
+<span class="linenos">87</span>    
+<span class="linenos">88</span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;blinker_system.v&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="linenos">89</span>        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">verilog</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">dut</span><span class="p">))</span>
+<span class="linenos">90</span>    
+<span class="linenos">91</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generated blinker_system.v&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
