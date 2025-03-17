@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial &mdash; Amaranth language &amp; toolchain 0.6.0.dev97 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/platformpicker.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=d131d90a" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=cbba5176"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="_static/platformpicker.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Language guide" href="guide.html" />
+    <link rel="prev" title="Getting started" href="start.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="cover.html" class="icon icon-home">
+            Amaranth language & toolchain
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.6.0.dev97
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Language &amp; toolchain</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="start.html">Getting started</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-to-amaranth-hdl">Introduction to Amaranth HDL</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#what-is-hdl">What is HDL?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#why-amaranth">Why Amaranth?</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up">Setting Up</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#understanding-digital-logic-basics">Understanding Digital Logic Basics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#signals">Signals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clock-domains">Clock Domains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#basic-example-and-gate">Basic Example: AND Gate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#your-first-circuit-led-blinker">Your First Circuit: LED Blinker</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#understanding-the-code">Understanding the Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-on-hardware">Running on Hardware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#viewing-simulation-results">Viewing Simulation Results</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#components-with-interfaces-up-counter">Components with Interfaces: Up Counter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#understanding-component-interfaces">Understanding Component Interfaces</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simulating-your-design">Simulating Your Design</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#understanding-the-simulation">Understanding the Simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#viewing-waveforms">Viewing Waveforms</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#finite-state-machines-uart-receiver">Finite State Machines: UART Receiver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#understanding-fsms-in-amaranth">Understanding FSMs in Amaranth</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simulating-the-uart-receiver">Simulating the UART Receiver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#building-a-complete-system">Building a Complete System</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#understanding-the-system-architecture">Understanding The System Architecture</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#running-on-real-hardware">Running on Real Hardware</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#for-other-boards">For Other Boards</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#troubleshooting-and-common-errors">Troubleshooting and Common Errors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#typeerrors-or-attributeerrors">TypeErrors or AttributeErrors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#runtime-or-logic-errors">Runtime or Logic Errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hardware-deployment-errors">Hardware Deployment Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#glossary-of-terms">Glossary of Terms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#external-resources">External Resources</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="guide.html">Language guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Language reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stdlib.html">Standard library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="simulator.html">Simulator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="platform.html">Platform integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changes.html">Changelog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contrib.html">Contributing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://amaranth-lang.org/docs/amaranth-stdio/latest/">Standard I/O components</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://amaranth-lang.org/docs/amaranth-soc/latest/">System on Chip toolkit</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="cover.html">Amaranth language & toolchain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="cover.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Language &amp; toolchain</a></li>
+      <li class="breadcrumb-item active">Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading"></a></h1>
+<p>This tutorial will guide you through using Amaranth HDL, starting with simple circuits and progressing to more complex designs.</p>
+<section id="introduction-to-amaranth-hdl">
+<h2>Introduction to Amaranth HDL<a class="headerlink" href="#introduction-to-amaranth-hdl" title="Link to this heading"></a></h2>
+<p>Amaranth is a Python-based hardware description language (HDL) that allows you to design digital circuits using Python’s object-oriented features. It provides a more modern and productive alternative to traditional HDLs like Verilog or VHDL.</p>
+<section id="what-is-hdl">
+<h3>What is HDL?<a class="headerlink" href="#what-is-hdl" title="Link to this heading"></a></h3>
+<p>A Hardware Description Language is a specialized programming language used to describe the structure and behavior of electronic circuits. Unlike software programming, HDL code describes actual physical hardware structures that will be created on an FPGA or ASIC.</p>
+</section>
+<section id="why-amaranth">
+<h3>Why Amaranth?<a class="headerlink" href="#why-amaranth" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Python-based</strong> - Use a familiar language with modern features</p></li>
+</ul>
+<p>—————————————————————– <strong>Object-oriented</strong> - Create reusable components
+————————————————- <strong>Built-in testing</strong> - Simulate designs without external tools
+————————————————————— <strong>Powerful abstractions</strong> - Simplify common hardware patterns</p>
+</section>
+</section>
+<section id="setting-up">
+<h2>Setting Up<a class="headerlink" href="#setting-up" title="Link to this heading"></a></h2>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h3>
+<p>Before starting, you’ll need:</p>
+<ul class="simple">
+<li><p>Python 3.9 or newer installed</p></li>
+</ul>
+<p>——————————- Basic knowledge of Python
+————————– For synthesis to hardware: Yosys (optional, installed automatically with PDM)</p>
+</section>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h3>
+<p>Install Amaranth using PDM (Python Development Master), which will handle creating a virtual environment for you:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Install PDM if you don&#39;t have it</span>
+pip<span class="w"> </span>install<span class="w"> </span>pdm
+
+<span class="c1"># Clone the repository and navigate to it</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/amaranth-lang/amaranth.git
+<span class="nb">cd</span><span class="w"> </span>amaranth
+
+<span class="c1"># Install Amaranth and its dependencies in a virtual environment</span>
+pdm<span class="w"> </span>install
+</pre></div>
+</div>
+<p>To run Amaranth scripts, use PDM to ensure your code runs in the correct environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pdm<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>your_script.py
+</pre></div>
+</div>
+</section>
+</section>
+<section id="understanding-digital-logic-basics">
+<h2>Understanding Digital Logic Basics<a class="headerlink" href="#understanding-digital-logic-basics" title="Link to this heading"></a></h2>
+<section id="signals">
+<h3>Signals<a class="headerlink" href="#signals" title="Link to this heading"></a></h3>
+<p>Signals are the fundamental elements in digital circuits - they represent wires carrying data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># Create a module (a container for your circuit)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Module</span><span class="p">()</span>
+
+<span class="c1"># Create signals (these represent wires in your circuit)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>       <span class="c1"># 1-bit signal (can be 0 or 1)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>      <span class="c1"># 8-bit signal (can be 0-255)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># 8-bit signal with initial value 42</span>
+
+<span class="c1"># Connect signals (using combinational logic)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="n">c</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># c will always equal b + 1</span>
+</pre></div>
+</div>
+</section>
+<section id="clock-domains">
+<h3>Clock Domains<a class="headerlink" href="#clock-domains" title="Link to this heading"></a></h3>
+<p>Digital circuits operate based on clock signals. Amaranth uses clock domains to organize logic:</p>
+<ul class="simple">
+<li><p><strong>Combinational domain</strong> (<code class="docutils literal notranslate"><span class="pre">m.d.comb</span></code>): Logic that responds immediately to input changes</p></li>
+</ul>
+<p>——————————————————————————————- <strong>Synchronous domain</strong> (<code class="docutils literal notranslate"><span class="pre">m.d.sync</span></code>): Logic that updates only on clock edges</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Combinational assignment (happens continuously)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="n">output</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">input_a</span> <span class="o">&amp;</span> <span class="n">input_b</span><span class="p">)</span>  <span class="c1"># output = input_a AND input_b</span>
+
+<span class="c1"># Synchronous assignment (happens only on clock edges)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="n">counter</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># counter increments each clock cycle</span>
+</pre></div>
+</div>
+</section>
+<section id="basic-example-and-gate">
+<h3>Basic Example: AND Gate<a class="headerlink" href="#basic-example-and-gate" title="Link to this heading"></a></h3>
+<p>Let’s create a simple AND gate:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">and_gate.py</span><a class="headerlink" href="#id1" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.back</span><span class="w"> </span><span class="kn">import</span> <span class="n">verilog</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="k">class</span><span class="w"> </span><span class="nc">AndGate</span><span class="p">(</span><span class="n">Elaboratable</span><span class="p">):</span>
+<span class="linenos"> 5</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="linenos"> 6</span>        <span class="c1"># Input ports</span>
+<span class="linenos"> 7</span>        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+<span class="linenos"> 8</span>        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+<span class="linenos"> 9</span>        <span class="c1"># Output port</span>
+<span class="linenos">10</span>        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+<span class="linenos">11</span>        
+<span class="linenos">12</span>    <span class="k">def</span><span class="w"> </span><span class="nf">elaborate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">):</span>
+<span class="linenos">13</span>        <span class="c1"># The &#39;elaborate&#39; method builds the actual circuit</span>
+<span class="linenos">14</span>        <span class="n">m</span> <span class="o">=</span> <span class="n">Module</span><span class="p">()</span>
+<span class="linenos">15</span>        <span class="c1"># y = a AND b</span>
+<span class="linenos">16</span>        <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+<span class="linenos">17</span>        <span class="k">return</span> <span class="n">m</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="c1"># Create the gate</span>
+<span class="linenos">20</span><span class="n">gate</span> <span class="o">=</span> <span class="n">AndGate</span><span class="p">()</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="c1"># Generate Verilog (for viewing or using with other tools)</span>
+<span class="linenos">23</span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;and_gate.v&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="linenos">24</span>    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">verilog</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">gate</span><span class="p">,</span> <span class="n">ports</span><span class="o">=</span><span class="p">[</span><span class="n">gate</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">gate</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">gate</span><span class="o">.</span><span class="n">y</span><span class="p">]))</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span><span class="c1"># How to run: pdm run python and_gate.py</span>
+<span class="linenos">27</span><span class="c1"># This will generate and_gate.v</span>
+</pre></div>
+</div>
+</div>
+<p>Viewing the generated Verilog (<code class="docutils literal notranslate"><span class="pre">and_gate.v</span></code>) shows what hardware will be created:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">top</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="n">b</span><span class="p">;</span>
+<span class="w">    </span><span class="k">output</span><span class="w"> </span><span class="n">y</span><span class="p">;</span>
+<span class="w">    </span><span class="k">assign</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="k">endmodule</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="your-first-circuit-led-blinker">
+<h2>Your First Circuit: LED Blinker<a class="headerlink" href="#your-first-circuit-led-blinker" title="Link to this heading"></a></h2>
+<p>Now let’s create a more practical circuit that blinks an LED:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">blinky.py</span><a class="headerlink" href="#id2" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="k">class</span><span class="w"> </span><span class="nc">Blinky</span><span class="p">(</span><span class="n">Elaboratable</span><span class="p">):</span>
+<span class="linenos"> 4</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="linenos"> 5</span>        <span class="c1"># No parameters needed for this simple example</span>
+<span class="linenos"> 6</span>        <span class="k">pass</span>
+<span class="linenos"> 7</span>        
+<span class="linenos"> 8</span>    <span class="k">def</span><span class="w"> </span><span class="nf">elaborate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">):</span>
+<span class="linenos"> 9</span>        <span class="c1"># The &#39;elaborate&#39; method transforms our Python description into a hardware circuit</span>
+<span class="linenos">10</span>        
+<span class="linenos">11</span>        <span class="c1"># Get the LED from the platform (if running on actual hardware)</span>
+<span class="linenos">12</span>        <span class="k">if</span> <span class="n">platform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">13</span>            <span class="n">led</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;led&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="linenos">14</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">15</span>            <span class="c1"># For simulation, create a dummy LED signal</span>
+<span class="linenos">16</span>            <span class="n">led</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+<span class="linenos">17</span>        
+<span class="linenos">18</span>        <span class="c1"># Create a timer (24-bit counter)</span>
+<span class="linenos">19</span>        <span class="c1"># This will count from 0 to 2^24-1 and then wrap around</span>
+<span class="linenos">20</span>        <span class="n">timer</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span>
+<span class="linenos">21</span>        
+<span class="linenos">22</span>        <span class="n">m</span> <span class="o">=</span> <span class="n">Module</span><span class="p">()</span>
+<span class="linenos">23</span>        
+<span class="linenos">24</span>        <span class="c1"># Increment timer every clock cycle</span>
+<span class="linenos">25</span>        <span class="c1"># &#39;d.sync&#39; means this happens on the rising edge of the clock</span>
+<span class="linenos">26</span>        <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="n">timer</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">timer</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">27</span>        
+<span class="linenos">28</span>        <span class="c1"># Connect LED to the most significant bit of the timer</span>
+<span class="linenos">29</span>        <span class="c1"># timer[-1] means &quot;the last bit&quot; (most significant bit)</span>
+<span class="linenos">30</span>        <span class="c1"># This makes the LED toggle on/off when the timer overflows</span>
+<span class="linenos">31</span>        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">led</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">):</span>
+<span class="linenos">32</span>            <span class="c1"># Hardware case where led is a platform pin</span>
+<span class="linenos">33</span>            <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="n">led</span><span class="o">.</span><span class="n">o</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">timer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> 
+<span class="linenos">34</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">35</span>            <span class="c1"># Simulation case where led is just a Signal</span>
+<span class="linenos">36</span>            <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="n">led</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">timer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="linenos">37</span>        
+<span class="linenos">38</span>        <span class="k">return</span> <span class="n">m</span>
+<span class="linenos">39</span>
+<span class="linenos">40</span><span class="c1"># This lets us run this file directly or include it in other scripts</span>
+<span class="linenos">41</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">42</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simulator</span><span class="p">,</span> <span class="n">Period</span>
+<span class="linenos">43</span>    
+<span class="linenos">44</span>    <span class="c1"># Create our circuit</span>
+<span class="linenos">45</span>    <span class="n">dut</span> <span class="o">=</span> <span class="n">Blinky</span><span class="p">()</span>
+<span class="linenos">46</span>    
+<span class="linenos">47</span>    <span class="c1"># Set up a simple simulation to watch the LED blink</span>
+<span class="linenos">48</span>    <span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span>
+<span class="linenos">49</span>    <span class="n">sim</span><span class="o">.</span><span class="n">add_clock</span><span class="p">(</span><span class="n">Period</span><span class="p">(</span><span class="n">MHz</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># 1 MHz clock (1μs period)</span>
+<span class="linenos">50</span>    
+<span class="linenos">51</span>    <span class="c1"># Run simulation and generate a waveform file</span>
+<span class="linenos">52</span>    <span class="k">with</span> <span class="n">sim</span><span class="o">.</span><span class="n">write_vcd</span><span class="p">(</span><span class="s2">&quot;blinky.vcd&quot;</span><span class="p">):</span>
+<span class="linenos">53</span>        <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">1_000_000</span><span class="p">)</span>  <span class="c1"># Run for 100ms of simulated time</span>
+<span class="linenos">54</span>
+<span class="linenos">55</span><span class="c1"># How to run: pdm run python blinky.py</span>
+<span class="linenos">56</span><span class="c1"># This will generate blinky.vcd, which you can view with GTKWave</span>
+</pre></div>
+</div>
+</div>
+<section id="understanding-the-code">
+<h3>Understanding the Code<a class="headerlink" href="#understanding-the-code" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Elaboratable</strong>: Base class for all Amaranth circuits</p></li>
+</ul>
+<p>——————————————————– <strong>elaborate(self, platform)</strong>: Method that builds the actual circuit
+——————————————————————— <strong>Signal(24)</strong>: Creates a 24-bit counter that can count from 0 to 2^24-1
+————————————————————————- <strong>m.d.sync += timer.eq(timer + 1)</strong>: Increments the timer on each clock edge
+—————————————————————————– <strong>timer[-1]</strong>: Accesses the most significant bit (bit 23) of the timer
+———————————————————————– <strong>led.o.eq()</strong>: Connects the output pin of the LED to our signal</p>
+</section>
+<section id="running-on-hardware">
+<h3>Running on Hardware<a class="headerlink" href="#running-on-hardware" title="Link to this heading"></a></h3>
+<p>To run on actual FPGA hardware, you’d need to specify a platform and call the build method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example for specific hardware (requires amaranth-boards package)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">amaranth_boards.icestick</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICEStickPlatform</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">platform</span> <span class="o">=</span> <span class="n">ICEStickPlatform</span><span class="p">()</span>
+    <span class="n">platform</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">Blinky</span><span class="p">(),</span> <span class="n">do_program</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="viewing-simulation-results">
+<h3>Viewing Simulation Results<a class="headerlink" href="#viewing-simulation-results" title="Link to this heading"></a></h3>
+<p>The simulation generates a VCD (Value Change Dump) file that you can view with waveform viewer software:</p>
+<ol class="arabic simple">
+<li><p>Install GTKWave: <a class="reference external" href="http://gtkwave.sourceforge.net/">http://gtkwave.sourceforge.net/</a></p></li>
+<li><p>Open the generated VCD file: <code class="docutils literal notranslate"><span class="pre">gtkwave</span> <span class="pre">blinky.vcd</span></code></p></li>
+<li><p>Select signals to view in the waveform</p></li>
+</ol>
+</section>
+</section>
+<section id="components-with-interfaces-up-counter">
+<h2>Components with Interfaces: Up Counter<a class="headerlink" href="#components-with-interfaces-up-counter" title="Link to this heading"></a></h2>
+<p>Now let’s create a reusable component with a well-defined interface:</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">up_counter.py</span><a class="headerlink" href="#id3" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">wiring</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.lib.wiring</span><span class="w"> </span><span class="kn">import</span> <span class="n">In</span><span class="p">,</span> <span class="n">Out</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="k">class</span><span class="w"> </span><span class="nc">UpCounter</span><span class="p">(</span><span class="n">wiring</span><span class="o">.</span><span class="n">Component</span><span class="p">):</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 8</span><span class="sd">    A 16-bit up counter with a fixed limit.</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="sd">    Parameters</span>
+<span class="linenos">11</span><span class="sd">    ----------</span>
+<span class="linenos">12</span><span class="sd">    limit : int</span>
+<span class="linenos">13</span><span class="sd">        The value at which the counter overflows.</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="sd">    Attributes</span>
+<span class="linenos">16</span><span class="sd">    ----------</span>
+<span class="linenos">17</span><span class="sd">    en : Signal, in</span>
+<span class="linenos">18</span><span class="sd">        The counter is incremented if ``en`` is asserted, and retains</span>
+<span class="linenos">19</span><span class="sd">        its value otherwise.</span>
+<span class="linenos">20</span><span class="sd">    ovf : Signal, out</span>
+<span class="linenos">21</span><span class="sd">        ``ovf`` is asserted when the counter reaches its limit.</span>
+<span class="linenos">22</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span>    <span class="n">en</span><span class="p">:</span> <span class="n">In</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">25</span>    <span class="n">ovf</span><span class="p">:</span> <span class="n">Out</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">):</span>
+<span class="linenos">28</span>        <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">=</span> <span class="n">limit</span>
+<span class="linenos">29</span>        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span>    <span class="k">def</span><span class="w"> </span><span class="nf">elaborate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">):</span>
+<span class="linenos">34</span>        <span class="n">m</span> <span class="o">=</span> <span class="n">Module</span><span class="p">()</span>
+<span class="linenos">35</span>
+<span class="linenos">36</span>        <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ovf</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="p">)</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span>        <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">en</span><span class="p">):</span>
+<span class="linenos">39</span>            <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ovf</span><span class="p">):</span>
+<span class="linenos">40</span>                <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="linenos">41</span>            <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">Else</span><span class="p">():</span>
+<span class="linenos">42</span>                <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">43</span>
+<span class="linenos">44</span>        <span class="k">return</span> <span class="n">m</span>
+</pre></div>
+</div>
+</div>
+<section id="understanding-component-interfaces">
+<h3>Understanding Component Interfaces<a class="headerlink" href="#understanding-component-interfaces" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">wiring.Component</span></code> base class provides a structured way to define interfaces:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">In(width)</span></code> and <code class="docutils literal notranslate"><span class="pre">Out(width)</span></code> define input and output ports</p></li>
+</ul>
+<p>—————————————————————- Type annotations (using Python’s standard syntax) define the interface
+———————————————————————– <code class="docutils literal notranslate"><span class="pre">super().__init__()</span></code> must be called after defining internal signals</p>
+</section>
+</section>
+<section id="simulating-your-design">
+<h2>Simulating Your Design<a class="headerlink" href="#simulating-your-design" title="Link to this heading"></a></h2>
+<p>Amaranth has a built-in simulator that allows you to test your designs:</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">up_counter_sim.py</span><a class="headerlink" href="#id4" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simulator</span><span class="p">,</span> <span class="n">Period</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="n">dut</span> <span class="o">=</span> <span class="n">UpCounter</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+<span class="linenos"> 5</span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">bench</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+<span class="linenos"> 6</span>    <span class="c1"># Disabled counter should not overflow.</span>
+<span class="linenos"> 7</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">en</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="linenos"> 8</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">):</span>
+<span class="linenos"> 9</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">10</span>        <span class="k">assert</span> <span class="ow">not</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">ovf</span><span class="p">)</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span>    <span class="c1"># Once enabled, the counter should overflow in 25 cycles.</span>
+<span class="linenos">13</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">en</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">14</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">24</span><span class="p">):</span>
+<span class="linenos">15</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">16</span>        <span class="k">assert</span> <span class="ow">not</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">ovf</span><span class="p">)</span>
+<span class="linenos">17</span>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">18</span>    <span class="k">assert</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">ovf</span><span class="p">)</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span>    <span class="c1"># The overflow should clear in one cycle.</span>
+<span class="linenos">21</span>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">22</span>    <span class="k">assert</span> <span class="ow">not</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">ovf</span><span class="p">)</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span>
+<span class="linenos">26</span><span class="n">sim</span><span class="o">.</span><span class="n">add_clock</span><span class="p">(</span><span class="n">Period</span><span class="p">(</span><span class="n">MHz</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="linenos">27</span><span class="n">sim</span><span class="o">.</span><span class="n">add_testbench</span><span class="p">(</span><span class="n">bench</span><span class="p">)</span>
+<span class="linenos">28</span><span class="k">with</span> <span class="n">sim</span><span class="o">.</span><span class="n">write_vcd</span><span class="p">(</span><span class="s2">&quot;up_counter.vcd&quot;</span><span class="p">):</span>
+<span class="linenos">29</span>    <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<section id="understanding-the-simulation">
+<h3>Understanding the Simulation<a class="headerlink" href="#understanding-the-simulation" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>ctx.set(signal, value)</strong>: Sets a signal to a specific value</p></li>
+</ul>
+<p>————————————————————— <strong>ctx.get(signal)</strong>: Gets the current value of a signal
+——————————————————– <strong>await ctx.tick()</strong>: Advances simulation by one clock cycle
+————————————————————- <strong>sim.add_clock(Period(MHz=1))</strong>: Adds a 1MHz clock to the simulation
+———————————————————————- <strong>sim.write_vcd(“file.vcd”)</strong>: Generates a waveform file for visualization</p>
+</section>
+<section id="viewing-waveforms">
+<h3>Viewing Waveforms<a class="headerlink" href="#viewing-waveforms" title="Link to this heading"></a></h3>
+<p>The VCD file contains all signal changes during simulation. To view it:</p>
+<ol class="arabic simple">
+<li><p>Install GTKWave: <a class="reference external" href="http://gtkwave.sourceforge.net/">http://gtkwave.sourceforge.net/</a></p></li>
+<li><p>Open the VCD file: <code class="docutils literal notranslate"><span class="pre">gtkwave</span> <span class="pre">counter_sim.vcd</span></code></p></li>
+<li><p>In GTKWave, select signals in the left panel and add them to the waveform view</p></li>
+</ol>
+</section>
+</section>
+<section id="finite-state-machines-uart-receiver">
+<h2>Finite State Machines: UART Receiver<a class="headerlink" href="#finite-state-machines-uart-receiver" title="Link to this heading"></a></h2>
+<p>Now let’s implement something more complex - a UART receiver using a Finite State Machine:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">uart_receiver.py</span><a class="headerlink" href="#id5" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="linenos">  2</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">wiring</span>
+<span class="linenos">  3</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.lib.wiring</span><span class="w"> </span><span class="kn">import</span> <span class="n">In</span><span class="p">,</span> <span class="n">Out</span>
+<span class="linenos">  4</span>
+<span class="linenos">  5</span><span class="k">class</span><span class="w"> </span><span class="nc">UARTReceiver</span><span class="p">(</span><span class="n">wiring</span><span class="o">.</span><span class="n">Component</span><span class="p">):</span>
+<span class="linenos">  6</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">  7</span><span class="sd">    A UART (serial) receiver that converts serial data to parallel.</span>
+<span class="linenos">  8</span><span class="sd">    </span>
+<span class="linenos">  9</span><span class="sd">    UART uses start and stop bits to frame each byte:</span>
+<span class="linenos"> 10</span><span class="sd">    - Line is high when idle</span>
+<span class="linenos"> 11</span><span class="sd">    - Start bit is low (0)</span>
+<span class="linenos"> 12</span><span class="sd">    - 8 data bits follow</span>
+<span class="linenos"> 13</span><span class="sd">    - Stop bit is high (1)</span>
+<span class="linenos"> 14</span><span class="sd">    </span>
+<span class="linenos"> 15</span><span class="sd">    Parameters</span>
+<span class="linenos"> 16</span><span class="sd">    ----------</span>
+<span class="linenos"> 17</span><span class="sd">    divisor : int</span>
+<span class="linenos"> 18</span><span class="sd">        Clock divisor for baud rate (system_clock / baud_rate)</span>
+<span class="linenos"> 19</span><span class="sd">        Example: 100MHz system clock, 9600 baud → divisor = 10,417</span>
+<span class="linenos"> 20</span><span class="sd">    </span>
+<span class="linenos"> 21</span><span class="sd">    Attributes</span>
+<span class="linenos"> 22</span><span class="sd">    ----------</span>
+<span class="linenos"> 23</span><span class="sd">    i : Signal, in</span>
+<span class="linenos"> 24</span><span class="sd">        Serial input line</span>
+<span class="linenos"> 25</span><span class="sd">    ack : Signal, in</span>
+<span class="linenos"> 26</span><span class="sd">        Acknowledgment (read the received byte)</span>
+<span class="linenos"> 27</span><span class="sd">    data : Signal, out</span>
+<span class="linenos"> 28</span><span class="sd">        8-bit received data</span>
+<span class="linenos"> 29</span><span class="sd">    rdy : Signal, out</span>
+<span class="linenos"> 30</span><span class="sd">        Data ready flag (high when byte received)</span>
+<span class="linenos"> 31</span><span class="sd">    err : Signal, out</span>
+<span class="linenos"> 32</span><span class="sd">        Error flag (high on framing error)</span>
+<span class="linenos"> 33</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos"> 34</span>    
+<span class="linenos"> 35</span>    <span class="c1"># Interface</span>
+<span class="linenos"> 36</span>    <span class="n">i</span><span class="p">:</span> <span class="n">In</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>     <span class="c1"># Input bit (serial line)</span>
+<span class="linenos"> 37</span>    <span class="n">data</span><span class="p">:</span> <span class="n">Out</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="c1"># Received byte (parallel output)</span>
+<span class="linenos"> 38</span>    <span class="n">rdy</span><span class="p">:</span> <span class="n">Out</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Data ready flag</span>
+<span class="linenos"> 39</span>    <span class="n">ack</span><span class="p">:</span> <span class="n">In</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>   <span class="c1"># Acknowledgment</span>
+<span class="linenos"> 40</span>    <span class="n">err</span><span class="p">:</span> <span class="n">Out</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Error flag</span>
+<span class="linenos"> 41</span>    
+<span class="linenos"> 42</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">divisor</span><span class="p">):</span>
+<span class="linenos"> 43</span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="linenos"> 44</span>        <span class="bp">self</span><span class="o">.</span><span class="n">divisor</span> <span class="o">=</span> <span class="n">divisor</span>  <span class="c1"># Clock divisor for baud rate</span>
+<span class="linenos"> 45</span>        
+<span class="linenos"> 46</span>    <span class="k">def</span><span class="w"> </span><span class="nf">elaborate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">):</span>
+<span class="linenos"> 47</span>        <span class="n">m</span> <span class="o">=</span> <span class="n">Module</span><span class="p">()</span>
+<span class="linenos"> 48</span>        
+<span class="linenos"> 49</span>        <span class="c1"># Baud rate generator</span>
+<span class="linenos"> 50</span>        <span class="c1"># This creates a &quot;strobe&quot; (stb) that pulses once per bit period</span>
+<span class="linenos"> 51</span>        <span class="n">ctr</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">divisor</span><span class="p">))</span>  <span class="c1"># Counter for clock division</span>
+<span class="linenos"> 52</span>        <span class="n">stb</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>  <span class="c1"># Strobe signal (pulses when we should sample)</span>
+<span class="linenos"> 53</span>        
+<span class="linenos"> 54</span>        <span class="c1"># When counter reaches zero, reset it and pulse the strobe</span>
+<span class="linenos"> 55</span>        <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">ctr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+<span class="linenos"> 56</span>            <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="n">ctr</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">divisor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Reset counter</span>
+<span class="linenos"> 57</span>            <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="n">stb</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Pulse strobe</span>
+<span class="linenos"> 58</span>        <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">Else</span><span class="p">():</span>
+<span class="linenos"> 59</span>            <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="n">ctr</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">ctr</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Decrement counter</span>
+<span class="linenos"> 60</span>            
+<span class="linenos"> 61</span>        <span class="c1"># Bit counter (counts 8 data bits)</span>
+<span class="linenos"> 62</span>        <span class="n">bit</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># 3 bits to count 0-7</span>
+<span class="linenos"> 63</span>        
+<span class="linenos"> 64</span>        <span class="c1"># FSM (Finite State Machine) for UART reception</span>
+<span class="linenos"> 65</span>        <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">FSM</span><span class="p">()</span> <span class="k">as</span> <span class="n">fsm</span><span class="p">:</span>
+<span class="linenos"> 66</span>            <span class="c1"># Initial state: wait for start bit</span>
+<span class="linenos"> 67</span>            <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="s2">&quot;START&quot;</span><span class="p">):</span>
+<span class="linenos"> 68</span>                <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">):</span>  <span class="c1"># If input goes low (start bit detected)</span>
+<span class="linenos"> 69</span>                    <span class="n">m</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="s2">&quot;DATA&quot;</span>  <span class="c1"># Move to DATA state</span>
+<span class="linenos"> 70</span>                    <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="p">[</span>
+<span class="linenos"> 71</span>                        <span class="c1"># Sample in middle of bit by setting counter to half divisor</span>
+<span class="linenos"> 72</span>                        <span class="n">ctr</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">divisor</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span>
+<span class="linenos"> 73</span>                        <span class="c1"># Prepare to receive 8 bits (bit 7 down to bit 0)</span>
+<span class="linenos"> 74</span>                        <span class="n">bit</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">7</span><span class="p">),</span>
+<span class="linenos"> 75</span>                    <span class="p">]</span>
+<span class="linenos"> 76</span>                    
+<span class="linenos"> 77</span>            <span class="c1"># Receiving data bits</span>
+<span class="linenos"> 78</span>            <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="s2">&quot;DATA&quot;</span><span class="p">):</span>
+<span class="linenos"> 79</span>                <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">stb</span><span class="p">):</span>  <span class="c1"># On each baud strobe (sampling point)</span>
+<span class="linenos"> 80</span>                    <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="p">[</span>
+<span class="linenos"> 81</span>                        <span class="n">bit</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">bit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span>  <span class="c1"># Decrement bit counter</span>
+<span class="linenos"> 82</span>                        <span class="c1"># Cat() concatenates bits - this shifts received bit into the data</span>
+<span class="linenos"> 83</span>                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">Cat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])),</span>
+<span class="linenos"> 84</span>                    <span class="p">]</span>
+<span class="linenos"> 85</span>                    <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">bit</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>  <span class="c1"># If all bits received</span>
+<span class="linenos"> 86</span>                        <span class="n">m</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="s2">&quot;STOP&quot;</span>  <span class="c1"># Move to STOP state</span>
+<span class="linenos"> 87</span>                        
+<span class="linenos"> 88</span>            <span class="c1"># Check stop bit</span>
+<span class="linenos"> 89</span>            <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="s2">&quot;STOP&quot;</span><span class="p">):</span>
+<span class="linenos"> 90</span>                <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">stb</span><span class="p">):</span>  <span class="c1"># On baud strobe</span>
+<span class="linenos"> 91</span>                    <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">):</span>  <span class="c1"># If input is high (valid stop bit)</span>
+<span class="linenos"> 92</span>                        <span class="n">m</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="s2">&quot;DONE&quot;</span>  <span class="c1"># Move to DONE state</span>
+<span class="linenos"> 93</span>                    <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">Else</span><span class="p">():</span>  <span class="c1"># If input is low (invalid stop bit)</span>
+<span class="linenos"> 94</span>                        <span class="n">m</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span>  <span class="c1"># Move to ERROR state</span>
+<span class="linenos"> 95</span>                        
+<span class="linenos"> 96</span>            <span class="c1"># Data ready - wait for acknowledgment</span>
+<span class="linenos"> 97</span>            <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="s2">&quot;DONE&quot;</span><span class="p">):</span>
+<span class="linenos"> 98</span>                <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rdy</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Set ready flag</span>
+<span class="linenos"> 99</span>                <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ack</span><span class="p">):</span>  <span class="c1"># When acknowledged</span>
+<span class="linenos">100</span>                    <span class="n">m</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="s2">&quot;START&quot;</span>  <span class="c1"># Go back to START for next byte</span>
+<span class="linenos">101</span>                    
+<span class="linenos">102</span>            <span class="c1"># Error state - stay here until reset</span>
+<span class="linenos">103</span>            <span class="c1"># fsm.ongoing() checks if FSM is in a specific state</span>
+<span class="linenos">104</span>            <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">err</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">fsm</span><span class="o">.</span><span class="n">ongoing</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">))</span>
+<span class="linenos">105</span>            <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">State</span><span class="p">(</span><span class="s2">&quot;ERROR&quot;</span><span class="p">):</span>
+<span class="linenos">106</span>                <span class="k">pass</span>  <span class="c1"># Do nothing (stay in error state)</span>
+<span class="linenos">107</span>                
+<span class="linenos">108</span>        <span class="k">return</span> <span class="n">m</span>
+<span class="linenos">109</span>
+<span class="linenos">110</span><span class="c1"># Example usage</span>
+<span class="linenos">111</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">112</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.back</span><span class="w"> </span><span class="kn">import</span> <span class="n">verilog</span>
+<span class="linenos">113</span>    
+<span class="linenos">114</span>    <span class="c1"># Create a UART receiver for 9600 baud with a 1MHz clock</span>
+<span class="linenos">115</span>    <span class="n">uart</span> <span class="o">=</span> <span class="n">UARTReceiver</span><span class="p">(</span><span class="n">divisor</span><span class="o">=</span><span class="mi">104</span><span class="p">)</span>  <span class="c1"># 1,000,000 / 9600 ≈ 104</span>
+<span class="linenos">116</span>    
+<span class="linenos">117</span>    <span class="c1"># Generate Verilog</span>
+<span class="linenos">118</span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;uart_rx.v&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="linenos">119</span>        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">verilog</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">uart</span><span class="p">))</span>
+<span class="linenos">120</span>    
+<span class="linenos">121</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generated uart_rx.v&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="understanding-fsms-in-amaranth">
+<h3>Understanding FSMs in Amaranth<a class="headerlink" href="#understanding-fsms-in-amaranth" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>with m.FSM() as fsm</strong>: Creates a finite state machine</p></li>
+</ul>
+<p>——————————————————— <strong>with m.State(“NAME”)</strong>: Defines a state
+—————————————— <strong>m.next = “STATE”</strong>: Sets the next state
+—————————————— <strong>fsm.ongoing(“STATE”)</strong>: Checks if the FSM is in a specific state
+——————————————————————- <strong>Cat(bit, data)</strong>: Concatenates bits (used for shifting)</p>
+</section>
+</section>
+<section id="simulating-the-uart-receiver">
+<h2>Simulating the UART Receiver<a class="headerlink" href="#simulating-the-uart-receiver" title="Link to this heading"></a></h2>
+<p>Let’s create a simulation to test our UART receiver:</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">uart_sim.py</span><a class="headerlink" href="#id6" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simulator</span><span class="p">,</span> <span class="n">Period</span>
+<span class="linenos"> 3</span><span class="c1"># Import our UART receiver</span>
+<span class="linenos"> 4</span><span class="kn">from</span><span class="w"> </span><span class="nn">uart_receiver</span><span class="w"> </span><span class="kn">import</span> <span class="n">UARTReceiver</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="c1"># Create our device under test</span>
+<span class="linenos"> 7</span><span class="n">dut</span> <span class="o">=</span> <span class="n">UARTReceiver</span><span class="p">(</span><span class="n">divisor</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>  <span class="c1"># Small divisor for faster simulation</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">uart_tx</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">byte</span><span class="p">,</span> <span class="n">divisor</span><span class="p">):</span>
+<span class="linenos">10</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to transmit a byte over UART.&quot;&quot;&quot;</span>
+<span class="linenos">11</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Idle high</span>
+<span class="linenos">12</span>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">13</span>    
+<span class="linenos">14</span>    <span class="c1"># Start bit (low)</span>
+<span class="linenos">15</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="linenos">16</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">divisor</span><span class="p">):</span>
+<span class="linenos">17</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">18</span>    
+<span class="linenos">19</span>    <span class="c1"># 8 data bits, LSB first</span>
+<span class="linenos">20</span>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+<span class="linenos">21</span>        <span class="n">bit</span> <span class="o">=</span> <span class="p">(</span><span class="n">byte</span> <span class="o">&gt;&gt;</span> <span class="n">i</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span>
+<span class="linenos">22</span>        <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">bit</span><span class="p">)</span>
+<span class="linenos">23</span>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">divisor</span><span class="p">):</span>
+<span class="linenos">24</span>            <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">25</span>    
+<span class="linenos">26</span>    <span class="c1"># Stop bit (high)</span>
+<span class="linenos">27</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">28</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">divisor</span><span class="p">):</span>
+<span class="linenos">29</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">30</span>        
+<span class="linenos">31</span><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_bench</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
+<span class="linenos">32</span>    <span class="c1"># Initialize signals</span>
+<span class="linenos">33</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>    <span class="c1"># Idle high</span>
+<span class="linenos">34</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">ack</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># No acknowledgment</span>
+<span class="linenos">35</span>    
+<span class="linenos">36</span>    <span class="c1"># Wait a few cycles</span>
+<span class="linenos">37</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="linenos">38</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">39</span>    
+<span class="linenos">40</span>    <span class="c1"># Send byte 0xA5 (10100101)</span>
+<span class="linenos">41</span>    <span class="k">await</span> <span class="n">uart_tx</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="mh">0xA5</span><span class="p">,</span> <span class="n">dut</span><span class="o">.</span><span class="n">divisor</span><span class="p">)</span>
+<span class="linenos">42</span>    
+<span class="linenos">43</span>    <span class="c1"># Wait for ready signal</span>
+<span class="linenos">44</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="linenos">45</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">46</span>        <span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">rdy</span><span class="p">):</span>
+<span class="linenos">47</span>            <span class="k">break</span>
+<span class="linenos">48</span>    
+<span class="linenos">49</span>    <span class="c1"># Verify received data</span>
+<span class="linenos">50</span>    <span class="k">assert</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">rdy</span><span class="p">),</span> <span class="s2">&quot;Ready signal not asserted&quot;</span>
+<span class="linenos">51</span>    <span class="k">assert</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mh">0xA5</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Wrong data: </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2"> (expected 0xA5)&quot;</span>
+<span class="linenos">52</span>    
+<span class="linenos">53</span>    <span class="c1"># Acknowledge reception</span>
+<span class="linenos">54</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">ack</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">55</span>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">56</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">ack</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="linenos">57</span>    
+<span class="linenos">58</span>    <span class="c1"># Send another byte with a framing error (no stop bit)</span>
+<span class="linenos">59</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Idle high</span>
+<span class="linenos">60</span>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">61</span>    
+<span class="linenos">62</span>    <span class="c1"># Start bit</span>
+<span class="linenos">63</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="linenos">64</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">divisor</span><span class="p">):</span>
+<span class="linenos">65</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">66</span>    
+<span class="linenos">67</span>    <span class="c1"># 8 data bits, all 1s</span>
+<span class="linenos">68</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+<span class="linenos">69</span>        <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">70</span>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">divisor</span><span class="p">):</span>
+<span class="linenos">71</span>            <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">72</span>    
+<span class="linenos">73</span>    <span class="c1"># Incorrect stop bit (should be 1, sending 0)</span>
+<span class="linenos">74</span>    <span class="n">ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="linenos">75</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">divisor</span><span class="p">):</span>
+<span class="linenos">76</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">77</span>    
+<span class="linenos">78</span>    <span class="c1"># Wait a bit and check error flag</span>
+<span class="linenos">79</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<span class="linenos">80</span>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">tick</span><span class="p">()</span>
+<span class="linenos">81</span>    
+<span class="linenos">82</span>    <span class="k">assert</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dut</span><span class="o">.</span><span class="n">err</span><span class="p">),</span> <span class="s2">&quot;Error flag not asserted on framing error&quot;</span>
+<span class="linenos">83</span>
+<span class="linenos">84</span><span class="c1"># Set up the simulator</span>
+<span class="linenos">85</span><span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span>
+<span class="linenos">86</span><span class="n">sim</span><span class="o">.</span><span class="n">add_clock</span><span class="p">(</span><span class="n">Period</span><span class="p">(</span><span class="n">MHz</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<span class="linenos">87</span><span class="n">sim</span><span class="o">.</span><span class="n">add_testbench</span><span class="p">(</span><span class="n">test_bench</span><span class="p">)</span>
+<span class="linenos">88</span>
+<span class="linenos">89</span><span class="c1"># Run simulation</span>
+<span class="linenos">90</span><span class="k">with</span> <span class="n">sim</span><span class="o">.</span><span class="n">write_vcd</span><span class="p">(</span><span class="s2">&quot;uart_sim.vcd&quot;</span><span class="p">,</span> <span class="s2">&quot;uart_sim.gtkw&quot;</span><span class="p">):</span>
+<span class="linenos">91</span>    <span class="n">sim</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="linenos">92</span>
+<span class="linenos">93</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation complete. View the waveform with &#39;gtkwave uart_sim.vcd&#39;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="building-a-complete-system">
+<h2>Building a Complete System<a class="headerlink" href="#building-a-complete-system" title="Link to this heading"></a></h2>
+<p>Now let’s build a system combining multiple components - a blinker that uses our counter:</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">controlled_blinker.py</span><a class="headerlink" href="#id7" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">wiring</span>
+<span class="linenos"> 3</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.lib.wiring</span><span class="w"> </span><span class="kn">import</span> <span class="n">In</span><span class="p">,</span> <span class="n">Out</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="c1"># Import our UpCounter</span>
+<span class="linenos"> 6</span><span class="kn">from</span><span class="w"> </span><span class="nn">up_counter</span><span class="w"> </span><span class="kn">import</span> <span class="n">UpCounter</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="k">class</span><span class="w"> </span><span class="nc">ControlledBlinker</span><span class="p">(</span><span class="n">Elaboratable</span><span class="p">):</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">10</span><span class="sd">    An LED blinker that uses a counter to control blink rate.</span>
+<span class="linenos">11</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">12</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq_hz</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="linenos">13</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">14</span><span class="sd">        Create a blinker with specified frequency.</span>
+<span class="linenos">15</span><span class="sd">        </span>
+<span class="linenos">16</span><span class="sd">        Args:</span>
+<span class="linenos">17</span><span class="sd">            freq_hz: Blink frequency in Hz (defaults to 1Hz)</span>
+<span class="linenos">18</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">19</span>        <span class="bp">self</span><span class="o">.</span><span class="n">freq_hz</span> <span class="o">=</span> <span class="n">freq_hz</span>
+<span class="linenos">20</span>        
+<span class="linenos">21</span>    <span class="k">def</span><span class="w"> </span><span class="nf">elaborate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platform</span><span class="p">):</span>
+<span class="linenos">22</span>        <span class="n">m</span> <span class="o">=</span> <span class="n">Module</span><span class="p">()</span>
+<span class="linenos">23</span>        
+<span class="linenos">24</span>        <span class="c1"># Get system clock frequency (for actual hardware)</span>
+<span class="linenos">25</span>        <span class="k">if</span> <span class="n">platform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">26</span>            <span class="n">sys_clock_freq</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">default_clk_frequency</span>
+<span class="linenos">27</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">28</span>            <span class="c1"># For simulation, assume 1MHz clock</span>
+<span class="linenos">29</span>            <span class="n">sys_clock_freq</span> <span class="o">=</span> <span class="mi">1_000_000</span>
+<span class="linenos">30</span>        
+<span class="linenos">31</span>        <span class="c1"># Calculate counter limit based on desired blink frequency</span>
+<span class="linenos">32</span>        <span class="c1"># The counter will overflow twice per cycle (on-off)</span>
+<span class="linenos">33</span>        <span class="n">counter_limit</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys_clock_freq</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq_hz</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="linenos">34</span>        
+<span class="linenos">35</span>        <span class="c1"># Create our counter submodule</span>
+<span class="linenos">36</span>        <span class="n">counter</span> <span class="o">=</span> <span class="n">UpCounter</span><span class="p">(</span><span class="n">counter_limit</span><span class="p">)</span>
+<span class="linenos">37</span>        <span class="c1"># Add it to our module with a name</span>
+<span class="linenos">38</span>        <span class="n">m</span><span class="o">.</span><span class="n">submodules</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span>
+<span class="linenos">39</span>        
+<span class="linenos">40</span>        <span class="c1"># Create a toggle flip-flop for LED state</span>
+<span class="linenos">41</span>        <span class="n">led_state</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">42</span>        
+<span class="linenos">43</span>        <span class="c1"># Always enable the counter</span>
+<span class="linenos">44</span>        <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="n">counter</span><span class="o">.</span><span class="n">en</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">45</span>        
+<span class="linenos">46</span>        <span class="c1"># Toggle LED state on overflow</span>
+<span class="linenos">47</span>        <span class="k">with</span> <span class="n">m</span><span class="o">.</span><span class="n">If</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">ovf</span><span class="p">):</span>
+<span class="linenos">48</span>            <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">sync</span> <span class="o">+=</span> <span class="n">led_state</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="o">~</span><span class="n">led_state</span><span class="p">)</span>
+<span class="linenos">49</span>            
+<span class="linenos">50</span>        <span class="c1"># Connect to the LED if running on hardware</span>
+<span class="linenos">51</span>        <span class="k">if</span> <span class="n">platform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">52</span>            <span class="n">led</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;led&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="linenos">53</span>            <span class="n">m</span><span class="o">.</span><span class="n">d</span><span class="o">.</span><span class="n">comb</span> <span class="o">+=</span> <span class="n">led</span><span class="o">.</span><span class="n">o</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">led_state</span><span class="p">)</span>
+<span class="linenos">54</span>        
+<span class="linenos">55</span>        <span class="k">return</span> <span class="n">m</span>
+<span class="linenos">56</span>
+<span class="linenos">57</span><span class="c1"># Example usage</span>
+<span class="linenos">58</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">59</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.sim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Simulator</span><span class="p">,</span> <span class="n">Period</span>
+<span class="linenos">60</span>    
+<span class="linenos">61</span>    <span class="c1"># Create a 2Hz blinker</span>
+<span class="linenos">62</span>    <span class="n">dut</span> <span class="o">=</span> <span class="n">ControlledBlinker</span><span class="p">(</span><span class="n">freq_hz</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="linenos">63</span>    
+<span class="linenos">64</span>    <span class="c1"># Basic simulation to observe blinking</span>
+<span class="linenos">65</span>    <span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span>
+<span class="linenos">66</span>    <span class="n">sim</span><span class="o">.</span><span class="n">add_clock</span><span class="p">(</span><span class="n">Period</span><span class="p">(</span><span class="n">MHz</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># 1MHz system clock</span>
+<span class="linenos">67</span>    
+<span class="linenos">68</span>    <span class="c1"># Add a simple test to just run for a while</span>
+<span class="linenos">69</span>    <span class="k">def</span><span class="w"> </span><span class="nf">test_bench</span><span class="p">():</span>
+<span class="linenos">70</span>        <span class="k">pass</span>
+<span class="linenos">71</span>    
+<span class="linenos">72</span>    <span class="n">sim</span><span class="o">.</span><span class="n">add_process</span><span class="p">(</span><span class="n">test_bench</span><span class="p">)</span>
+<span class="linenos">73</span>    
+<span class="linenos">74</span>    <span class="c1"># Run for 2 seconds (enough to see multiple blinks at 2Hz)</span>
+<span class="linenos">75</span>    <span class="k">with</span> <span class="n">sim</span><span class="o">.</span><span class="n">write_vcd</span><span class="p">(</span><span class="s2">&quot;blinker_system.vcd&quot;</span><span class="p">,</span> <span class="s2">&quot;blinker_system.gtkw&quot;</span><span class="p">):</span>
+<span class="linenos">76</span>        <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">2_000_000</span><span class="p">)</span>  <span class="c1"># 2M ns = 2 seconds</span>
+<span class="linenos">77</span>        
+<span class="linenos">78</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulation complete. View waveform with &#39;gtkwave blinker_system.vcd&#39;&quot;</span><span class="p">)</span>
+<span class="linenos">79</span>    
+<span class="linenos">80</span>    <span class="c1"># Generate Verilog</span>
+<span class="linenos">81</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">amaranth.back</span><span class="w"> </span><span class="kn">import</span> <span class="n">verilog</span>
+<span class="linenos">82</span>    
+<span class="linenos">83</span>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;blinker_system.v&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="linenos">84</span>        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">verilog</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">dut</span><span class="p">))</span>
+<span class="linenos">85</span>    
+<span class="linenos">86</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generated blinker_system.v&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<section id="understanding-the-system-architecture">
+<h3>Understanding The System Architecture<a class="headerlink" href="#understanding-the-system-architecture" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Submodules</strong>: <code class="docutils literal notranslate"><span class="pre">m.submodules.name</span> <span class="pre">=</span> <span class="pre">module</span></code> adds a submodule to your design</p></li>
+</ul>
+<p>——————————————————————————– <strong>Clock Frequency</strong>: Real hardware platforms provide clock frequency info
+————————————————————————– <strong>Platform Interface</strong>: <code class="docutils literal notranslate"><span class="pre">platform.request()</span></code> gets hardware I/O pins
+———————————————————————- <strong>Hierarchical Design</strong>: Components can contain other components</p>
+</section>
+</section>
+<section id="running-on-real-hardware">
+<h2>Running on Real Hardware<a class="headerlink" href="#running-on-real-hardware" title="Link to this heading"></a></h2>
+<p>To run your design on actual FPGA hardware, you need:</p>
+<ol class="arabic simple">
+<li><p>An FPGA board</p></li>
+<li><p>The appropriate platform package (e.g., <code class="docutils literal notranslate"><span class="pre">amaranth-boards</span></code>)</p></li>
+<li><p>A top-level module that interfaces with the hardware</p></li>
+</ol>
+<p>Here’s an example for an iCEStick FPGA board:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">program_icestick.py</span><a class="headerlink" href="#id8" title="Link to this code"></a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">amaranth</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="linenos"> 2</span><span class="c1"># This import assumes you have amaranth-boards package installed</span>
+<span class="linenos"> 3</span><span class="c1"># If using a different board, import the appropriate platform</span>
+<span class="linenos"> 4</span><span class="k">try</span><span class="p">:</span>
+<span class="linenos"> 5</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">amaranth_boards.icestick</span><span class="w"> </span><span class="kn">import</span> <span class="n">ICEStickPlatform</span>
+<span class="linenos"> 6</span>    
+<span class="linenos"> 7</span>    <span class="c1"># Import our blinker</span>
+<span class="linenos"> 8</span>    <span class="kn">from</span><span class="w"> </span><span class="nn">controlled_blinker</span><span class="w"> </span><span class="kn">import</span> <span class="n">ControlledBlinker</span>
+<span class="linenos"> 9</span>    
+<span class="linenos">10</span>    <span class="c1"># Create a platform for the iCEStick board</span>
+<span class="linenos">11</span>    <span class="n">platform</span> <span class="o">=</span> <span class="n">ICEStickPlatform</span><span class="p">()</span>
+<span class="linenos">12</span>    
+<span class="linenos">13</span>    <span class="c1"># Create a 1Hz blinker (adjust frequency as needed)</span>
+<span class="linenos">14</span>    <span class="n">blinker</span> <span class="o">=</span> <span class="n">ControlledBlinker</span><span class="p">(</span><span class="n">freq_hz</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">15</span>    
+<span class="linenos">16</span>    <span class="c1"># Build and program</span>
+<span class="linenos">17</span>    <span class="n">platform</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">blinker</span><span class="p">,</span> <span class="n">do_program</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="linenos">18</span><span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+<span class="linenos">19</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This example requires amaranth-boards package&quot;</span><span class="p">)</span>
+<span class="linenos">20</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Install it with: pdm add amaranth-boards&quot;</span><span class="p">)</span>
+<span class="linenos">21</span>    
+<span class="linenos">22</span><span class="c1"># How to run: pdm run python program_icestick.py</span>
+</pre></div>
+</div>
+</div>
+<section id="for-other-boards">
+<h3>For Other Boards<a class="headerlink" href="#for-other-boards" title="Link to this heading"></a></h3>
+<p>The process is similar for other boards:</p>
+<ol class="arabic simple">
+<li><p>Import the appropriate platform</p></li>
+<li><p>Create an instance of your top-level module</p></li>
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">platform.build(module,</span> <span class="pre">do_program=True)</span></code></p></li>
+</ol>
+</section>
+</section>
+<section id="troubleshooting-and-common-errors">
+<h2>Troubleshooting and Common Errors<a class="headerlink" href="#troubleshooting-and-common-errors" title="Link to this heading"></a></h2>
+<section id="typeerrors-or-attributeerrors">
+<h3>TypeErrors or AttributeErrors<a class="headerlink" href="#typeerrors-or-attributeerrors" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">TypeError</span><span class="p">:</span> <span class="n">Cannot</span> <span class="n">assign</span> <span class="n">to</span> <span class="n">non</span><span class="o">-</span><span class="n">Value</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Likely tried to assign to a Python variable instead of a Signal</p></li>
+</ul>
+<p>—————————————————————– Always use <code class="docutils literal notranslate"><span class="pre">.eq()</span></code> for hardware assignments, not Python <code class="docutils literal notranslate"><span class="pre">=</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">AttributeError</span><span class="p">:</span> <span class="s1">&#39;Module&#39;</span> <span class="nb">object</span> <span class="n">has</span> <span class="n">no</span> <span class="n">attribute</span> <span class="s1">&#39;domain&#39;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>You probably wrote <code class="docutils literal notranslate"><span class="pre">m.domain.sync</span></code> instead of <code class="docutils literal notranslate"><span class="pre">m.d.sync</span></code></p></li>
+</ul>
+</section>
+<section id="runtime-or-logic-errors">
+<h3>Runtime or Logic Errors<a class="headerlink" href="#runtime-or-logic-errors" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">RuntimeError</span><span class="p">:</span> <span class="n">Cannot</span> <span class="n">add</span> <span class="n">synchronous</span> <span class="n">assignments</span><span class="p">:</span> <span class="n">no</span> <span class="n">sync</span> <span class="n">domain</span> <span class="ow">is</span> <span class="n">currently</span> <span class="n">active</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>You need to define a clock domain</p></li>
+</ul>
+<p>———————————– For simulation, add <code class="docutils literal notranslate"><span class="pre">sim.add_clock(Period(MHz=1))</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Signal</span> <span class="n">has</span> <span class="n">no</span> <span class="n">timeline</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Signal is not being driven or used in the design</p></li>
+</ul>
+<p>————————————————– Check for typos or unused signals</p>
+</section>
+<section id="hardware-deployment-errors">
+<h3>Hardware Deployment Errors<a class="headerlink" href="#hardware-deployment-errors" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">OSError</span><span class="p">:</span> <span class="n">Toolchain</span> <span class="n">binary</span> <span class="ow">not</span> <span class="n">found</span> <span class="ow">in</span> <span class="n">PATH</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>The required synthesis tools (like Yosys) are not installed or not in PATH</p></li>
+</ul>
+<p>—————————————————————————- Install the required tools or add them to PATH</p>
+</section>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<p>This tutorial has covered the basics of Amaranth HDL. To continue learning:</p>
+<ol class="arabic simple">
+<li><p><strong>Advanced Components</strong>: Explore memory components in <code class="docutils literal notranslate"><span class="pre">amaranth.lib.memory</span></code></p></li>
+<li><p><strong>Stream Processing</strong>: Learn about streaming interfaces in <code class="docutils literal notranslate"><span class="pre">amaranth.lib.stream</span></code></p></li>
+<li><p><strong>Clock Domain Crossing</strong>: Study techniques in <code class="docutils literal notranslate"><span class="pre">amaranth.lib.cdc</span></code></p></li>
+<li><p><strong>Hardware Platforms</strong>: Experiment with FPGA boards using <code class="docutils literal notranslate"><span class="pre">amaranth-boards</span></code></p></li>
+<li><p><strong>Community Resources</strong>:</p>
+<ul class="simple">
+<li><p>GitHub: <a class="reference external" href="https://github.com/amaranth-lang/amaranth">https://github.com/amaranth-lang/amaranth</a></p></li>
+<li><p>Documentation: <a class="reference external" href="https://amaranth-lang.org">https://amaranth-lang.org</a></p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="glossary-of-terms">
+<h2>Glossary of Terms<a class="headerlink" href="#glossary-of-terms" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>HDL</strong>: Hardware Description Language - used to describe electronic circuits</p></li>
+</ul>
+<p>——————————————————————————- <strong>FPGA</strong>: Field-Programmable Gate Array - reconfigurable hardware
+—————————————————————— <strong>Combinational Logic</strong>: Logic where outputs depend only on current inputs
+————————————————————————— <strong>Sequential Logic</strong>: Logic where outputs depend on current inputs and state
+—————————————————————————– <strong>Clock Domain</strong>: Group of logic synchronized to the same clock
+—————————————————————- <strong>Elaboration</strong>: Process of transforming Python code into a hardware netlist
+—————————————————————————– <strong>Simulation</strong>: Testing hardware designs in software before physical implementation
+———————————————————————————— <strong>Synthesis</strong>: Process of transforming a hardware design into physical gates
+—————————————————————————– <strong>VCD</strong>: Value Change Dump - file format for recording signal changes in simulation</p>
+</section>
+<section id="external-resources">
+<h2>External Resources<a class="headerlink" href="#external-resources" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following resources from the Amaranth community may also be helpful:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://vivonomicon.com/2020/04/14/learning-fpga-design-with-nmigen/">Learning FPGA Design with nMigen</a> by Vivonomicon;</p></li>
+<li><p><a class="reference external" href="https://github.com/kbob/nmigen-examples">“I want to learn nMigen”</a> by kbob;</p></li>
+<li><p><a class="reference external" href="https://github.com/robertbaruch/amaranth-tutorial">A tutorial for using Amaranth HDL</a> by Robert Baruch.</p></li>
+<li><p><a class="reference external" href="https://github.com/robertbaruch/amaranth-exercises">Graded exercises for Amaranth HDL</a> by Robert Baruch.</p></li>
+<li><p><a class="reference external" href="https://medium.com/&#64;sporniket.studio/my-journey-with-the-amaranth-hdl-226b38d0b023">My journey with the Amaranth HDL</a> by David Sporn, focussed on setting up the workstation, using formal verification and setting up continuous integration.</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="start.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="guide.html" class="btn btn-neutral float-right" title="Language guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020—2025, Amaranth project contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
