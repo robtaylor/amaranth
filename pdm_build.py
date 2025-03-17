@@ -5,7 +5,12 @@ from pdm.backend._vendor.packaging.version import Version
 
 
 def format_version(version: SCMVersion) -> str:
-    major, minor, patch = (int(n) for n in str(version.version).split(".")[:3])
+    # Split version parts and ensure we have at least 3 parts (major, minor, patch)
+    version_parts = str(version.version).split(".")
+    while len(version_parts) < 3:
+        version_parts.append("0")  # Add trailing zeros if less than 3 parts
+    
+    major, minor, patch = (int(n) for n in version_parts[:3])
     dirty = f"+{datetime.utcnow():%Y%m%d.%H%M%S}" if version.dirty else ""
     if version.distance is None:
         return f"{major}.{minor}.{patch}{dirty}"
