@@ -50,7 +50,12 @@ if __name__ == "__main__":
     
     # Run simulation and generate a waveform file
     with sim.write_vcd("blinky.vcd"):
-        sim.run_until(100 * 1_000_000)  # Run for 100ms of simulated time
+        # Check if running in CI environment - run much shorter if so
+        import os
+        if os.environ.get("CI", "false").lower() == "true":
+            sim.run_until(1_000)  # Run for just 1μs in CI
+        else:
+            sim.run_until(100 * 1_000_000)  # Run for 100ms of simulated time
 
 # How to run: pdm run python blinky.py
 # This will generate blinky.vcd, which you can view with GTKWave

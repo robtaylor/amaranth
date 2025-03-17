@@ -71,9 +71,14 @@ if __name__ == "__main__":
     
     sim.add_process(test_bench)
     
-    # Run for 2 seconds (enough to see multiple blinks at 2Hz)
+    # Run simulation and generate a waveform file
     with sim.write_vcd("blinker_system.vcd", "blinker_system.gtkw"):
-        sim.run_until(2_000_000)  # 2M ns = 2 seconds
+        # Check if running in CI environment - run much shorter if so
+        import os
+        if os.environ.get("CI", "false").lower() == "true":
+            sim.run_until(1_000)  # Run for just 1μs in CI
+        else:
+            sim.run_until(2_000_000)  # 2M ns = 2 seconds
         
     print("Simulation complete. View waveform with 'gtkwave blinker_system.vcd'")
     
