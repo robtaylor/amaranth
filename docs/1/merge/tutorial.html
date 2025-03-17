@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; Amaranth language &amp; toolchain 0.6.0.dev108 documentation</title>
+  <title>Tutorial &mdash; Amaranth language &amp; toolchain 0.6.0.dev110 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/platformpicker.css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=3c567cdd"></script>
+        <script src="_static/documentation_options.js?v=7b0a9f96"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/platformpicker.js"></script>
@@ -41,7 +41,7 @@
               <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.6.0.dev108
+                0.6.0.dev110
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -342,9 +342,9 @@ pdm<span class="w"> </span>install
 <span class="linenos">53</span>        <span class="c1"># Check if running in CI environment - run much shorter if so</span>
 <span class="linenos">54</span>        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="linenos">55</span>        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CI&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
-<span class="linenos">56</span>            <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>  <span class="c1"># Run for just 100ns in CI</span>
+<span class="linenos">56</span>            <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="n">Period</span><span class="p">(</span><span class="n">ns</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>  <span class="c1"># Run for just 100ns in CI</span>
 <span class="linenos">57</span>        <span class="k">else</span><span class="p">:</span>
-<span class="linenos">58</span>            <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="mi">1_000_000</span><span class="p">)</span>  <span class="c1"># Run for 100ms of simulated time</span>
+<span class="linenos">58</span>            <span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="n">Period</span><span class="p">(</span><span class="n">ms</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span>  <span class="c1"># Run for 100ms of simulated time</span>
 <span class="linenos">59</span>
 <span class="linenos">60</span><span class="c1"># How to run: pdm run python blinky.py</span>
 <span class="linenos">61</span><span class="c1"># This will generate blinky.vcd, which you can view with GTKWave</span>
