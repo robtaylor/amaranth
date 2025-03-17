@@ -76,7 +76,7 @@ jobs:
               
               // Call Claude with the prompt
               const response = await anthropic.messages.create({
-                model: "claude-3-7-opus-20240229",
+                model: "claude-3-7-opus-20250201",
                 max_tokens: 4000,
                 messages: [
                   { role: "user", content: prompt }
