@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Simulator &mdash; Amaranth language &amp; toolchain 0.6.0.dev105 documentation</title>
+  <title>Simulator &mdash; Amaranth language &amp; toolchain 0.6.0.dev106 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/platformpicker.css" />
@@ -17,7 +17,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=47ccd16c"></script>
+        <script src="_static/documentation_options.js?v=70345b06"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="_static/platformpicker.js"></script>
@@ -41,7 +41,7 @@
               <img src="_static/logo.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.6.0.dev105
+                0.6.0.dev106
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -753,6 +753,148 @@ Whenever a suitable clock domain is available, use
 <dt class="sig sig-object py" id="amaranth.sim.SimulatorContext.elapsed_time">
 <span class="sig-name descname"><span class="pre">elapsed_time</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#amaranth.sim.SimulatorContext.elapsed_time" title="Link to this definition"></a></dt>
 <dd><p>Return the currently elapsed simulation time.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amaranth.hdl._time.</span></span><span class="sig-name descname"><span class="pre">Period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Class representing a time period or frequency.</p>
+<p>This class is used to specify simulation timings with well-defined units. A Period
+object can be constructed by specifying either a time interval or a frequency.</p>
+<p>Time units:
+* s - seconds
+* ms - milliseconds
+* us - microseconds
+* ns - nanoseconds
+* ps - picoseconds
+* fs - femtoseconds</p>
+<p>Frequency units:
+* Hz - hertz
+* kHz - kilohertz
+* MHz - megahertz
+* GHz - gigahertz</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – A single keyword argument, either a time unit or a frequency unit.
+Examples: <code class="docutils literal notranslate"><span class="pre">Period(ns=10)</span></code>, <code class="docutils literal notranslate"><span class="pre">Period(MHz=100)</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Create a period representing 10 nanoseconds:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Period</span><span class="p">(</span><span class="n">ns</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">Period(ns=10)</span>
+</pre></div>
+</div>
+<p>Create a period representing a 100 MHz clock:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Period</span><span class="p">(</span><span class="n">MHz</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="go">Period(ns=10)</span>
+</pre></div>
+</div>
+<p>Use with simulator:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">dut</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span><span class="o">.</span><span class="n">add_clock</span><span class="p">(</span><span class="n">Period</span><span class="p">(</span><span class="n">MHz</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># 1 MHz clock</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim</span><span class="o">.</span><span class="n">run_until</span><span class="p">(</span><span class="n">Period</span><span class="p">(</span><span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>  <span class="c1"># Run for 10 milliseconds</span>
+</pre></div>
+</div>
+<p>Arithmetic operations:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Period</span><span class="p">(</span><span class="n">ns</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="n">Period</span><span class="p">(</span><span class="n">ns</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="go">Period(ns=15)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Period</span><span class="p">(</span><span class="n">ns</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="go">Period(ns=20)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">seconds</span></span></dt>
+<dd><p>Get the period value in seconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">milliseconds</span></span></dt>
+<dd><p>Get the period value in milliseconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">microseconds</span></span></dt>
+<dd><p>Get the period value in microseconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nanoseconds</span></span></dt>
+<dd><p>Get the period value in nanoseconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">picoseconds</span></span></dt>
+<dd><p>Get the period value in picoseconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">femtoseconds</span></span></dt>
+<dd><p>Get the period value in femtoseconds.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hertz</span></span></dt>
+<dd><p>Get the frequency in hertz.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kilohertz</span></span></dt>
+<dd><p>Get the frequency in kilohertz.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">megahertz</span></span></dt>
+<dd><p>Get the frequency in megahertz.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gigahertz</span></span></dt>
+<dd><p>Get the frequency in gigahertz.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Add two Period objects together.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__sub__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Subtract another Period object from this one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Multiply a Period by a real number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__rmul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Multiply a Period by a real number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">__truediv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Divide this Period.</p>
+<p>When dividing by another Period, returns a real number.
+When dividing by a real number, returns a new Period.</p>
 </dd></dl>
 
 </dd></dl>
