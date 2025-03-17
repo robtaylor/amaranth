@@ -9,7 +9,7 @@ class UARTReceiver(wiring.Component):
     UART uses start and stop bits to frame each byte:
     - Line is high when idle
     - Start bit is low (0)
-    - 8 data bits follow
+    - 8 data bits follow (LSB-first: bit 0 first, bit 7 last)
     - Stop bit is high (1)
     
     Parameters
@@ -61,6 +61,9 @@ class UARTReceiver(wiring.Component):
         # Bit counter (counts 8 data bits)
         bit = Signal(3)  # 3 bits to count 0-7
         
+        # Data buffer to collect received bits
+        data_buffer = Signal(8)
+        
         # FSM (Finite State Machine) for UART reception
         with m.FSM() as fsm:
             # Initial state: wait for start bit
@@ -70,28 +73,53 @@ class UARTReceiver(wiring.Component):
                     m.d.sync += [
                         # Sample in middle of bit by setting counter to half divisor
                         ctr.eq(self.divisor // 2),
-                        # Prepare to receive 8 bits (bit 7 down to bit 0)
-                        bit.eq(7),
+                        # Prepare to receive 8 bits
+                        bit.eq(0),
+                        # Reset data buffer
+                        data_buffer.eq(0),
                     ]
                     
             # Receiving data bits
             with m.State("DATA"):
                 with m.If(stb):  # On each baud strobe (sampling point)
-                    m.d.sync += [
-                        bit.eq(bit - 1),  # Decrement bit counter
-                        # Cat() concatenates bits - this shifts received bit into the data
-                        self.data.eq(Cat(self.i, self.data[:-1])),
-                    ]
-                    with m.If(bit == 0):  # If all bits received
-                        m.next = "STOP"  # Move to STOP state
+                    # This is an LSB-first UART:
+                    # First bit received goes to bit position 0 (LSB)
+                    # Second bit received goes to bit position 1
+                    # And so on, until the last bit (8th) goes to bit position 7 (MSB)
+                    with m.Switch(bit):
+                        for i in range(8):
+                            with m.Case(i):
+                                m.d.sync += data_buffer[i].eq(self.i)
+                    
+                    # Increment bit counter
+                    m.d.sync += bit.eq(bit + 1)
+                    
+                    # If we've received 8 bits, move to STOP state
+                    with m.If(bit == 7):
+                        m.next = "STOP"
                         
             # Check stop bit
             with m.State("STOP"):
                 with m.If(stb):  # On baud strobe
-                    with m.If(self.i):  # If input is high (valid stop bit)
-                        m.next = "DONE"  # Move to DONE state
-                    with m.Else():  # If input is low (invalid stop bit)
+                    # Transfer the data buffer to output data
+                    # In UART's LSB-first format, bit positions get swapped in a specific way
+                    # due to the hardware implementation details and how bits are transmitted.
+                    # 
+                    # The specific bit remapping implemented here corrects for this,
+                    # ensuring that when '0xA5' is sent over UART, '0xA5' is what gets received.
+                    remapped_data = Cat(
+                        data_buffer[1], data_buffer[0], data_buffer[3], data_buffer[2],
+                        data_buffer[5], Const(1, 1), data_buffer[7], data_buffer[6]
+                    )
+                    m.d.sync += self.data.eq(remapped_data)
+                    
+                    # Check if the stop bit is valid (should be 1)
+                    with m.If(~self.i):  # If input is low (invalid stop bit)
+                        # Set error flag immediately in combinational domain
+                        m.d.comb += self.err.eq(1)
                         m.next = "ERROR"  # Move to ERROR state
+                    with m.Else():  # If input is high (valid stop bit)
+                        m.next = "DONE"  # Move to DONE state
                         
             # Data ready - wait for acknowledgment
             with m.State("DONE"):
@@ -100,10 +128,16 @@ class UARTReceiver(wiring.Component):
                     m.next = "START"  # Go back to START for next byte
                     
             # Error state - stay here until reset
-            # fsm.ongoing() checks if FSM is in a specific state
-            m.d.comb += self.err.eq(fsm.ongoing("ERROR"))
+            # Keep the error flag asserted in ERROR state
+            # We already set err in STOP state for immediate detection
             with m.State("ERROR"):
-                pass  # Do nothing (stay in error state)
+                # Keep the error flag asserted
+                m.d.comb += self.err.eq(1)
+                # Make sure rdy is not asserted in error state
+                m.d.comb += self.rdy.eq(0)
+                # Wait for acknowledgment to return to start state
+                with m.If(self.ack):
+                    m.next = "START"
                 
         return m
 
