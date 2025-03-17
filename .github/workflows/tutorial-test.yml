@@ -42,9 +42,37 @@ jobs:
           done
   
   test-tutorial:
-    name: Test Tutorial Code
+    name: Test Tutorial Code (${{ matrix.example.name }})
     runs-on: ubuntu-latest
     needs: validate-tutorial
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - name: and_gate
+            file: and_gate.py
+            output_files: and_gate.v
+            check_cmd: ls -la and_gate.v && head -n 10 and_gate.v
+          - name: blinky
+            file: blinky.py
+            output_files: blinky.vcd
+            check_cmd: ls -la blinky.vcd
+          - name: up_counter
+            file: up_counter.py
+            output_files: up_counter.vcd up_counter.v
+            check_cmd: ls -la up_counter.v && head -n 10 up_counter.v
+          - name: uart_receiver
+            file: uart_receiver.py
+            output_files: uart_rx.v
+            check_cmd: ls -la uart_rx.v && head -n 10 uart_rx.v
+          - name: uart_sim
+            file: uart_sim.py
+            output_files: uart_sim.vcd
+            check_cmd: ls -la uart_sim.vcd
+          - name: controlled_blinker
+            file: controlled_blinker.py
+            output_files: blinker_system.v blinker_system.vcd
+            check_cmd: ls -la blinker_system.v blinker_system.vcd && head -n 10 blinker_system.v
     
     steps:
       - name: Checkout code
@@ -62,39 +90,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gtkwave
           pdm install
+          
+      - name: Set CI environment variable
+        run: echo "CI=true" >> $GITHUB_ENV
 
-      - name: Run and_gate.py example
+      - name: Run ${{ matrix.example.name }} example
         run: |
-          pdm run python docs/_code/and_gate.py
-          ls -la and_gate.v && head -n 10 and_gate.v
-
-      - name: Run blinky.py example
-        run: |
-          pdm run python docs/_code/blinky.py
-          ls -la blinky.vcd
-
-      - name: Run up_counter.py example
-        run: |
-          pdm run python docs/_code/up_counter.py
-          ls -la counter.v && head -n 10 counter.v
-
-      - name: Run uart_receiver.py example
-        run: |
-          pdm run python docs/_code/uart_receiver.py
-          ls -la uart_rx.v && head -n 10 uart_rx.v
-
-      - name: Run uart_sim.py example
-        run: |
-          pdm run python docs/_code/uart_sim.py
-          ls -la uart_sim.vcd
-
-      - name: Run controlled_blinker.py example
-        run: |
-          pdm run python docs/_code/controlled_blinker.py
-          ls -la blinker_system.v && head -n 10 blinker_system.v
-          ls -la blinker_system.vcd
+          pdm run python docs/_code/${{ matrix.example.file }}
+          ${{ matrix.example.check_cmd }}
 
       - name: Verify waveform files with GTKWave
+        if: contains(matrix.example.output_files, '.vcd')
         run: |
           gtkwave -V
           for vcd_file in *.vcd; do
@@ -106,36 +112,77 @@ jobs:
           
       - name: Generate test summary
         run: |
-          echo "## Tutorial Code Test Results" > summary.md
-          echo "| Example | Status |" >> summary.md
-          echo "|---------|--------|" >> summary.md
+          echo "## ${{ matrix.example.name }} Test Result" > summary.md
           
-          check_file() {
-            if [ -f "$1" ]; then
-              echo "| $2 | ✅ Pass |" >> summary.md
+          # Check if all expected output files exist
+          OUTPUT_FILES="${{ matrix.example.output_files }}"
+          ALL_FILES_EXIST=true
+          
+          for file in $OUTPUT_FILES; do
+            if [ -f "$file" ]; then
+              echo "- $file: ✅ Pass" >> summary.md
             else
-              echo "| $2 | ❌ Fail |" >> summary.md
-              EXIT_CODE=1
+              echo "- $file: ❌ Fail" >> summary.md
+              ALL_FILES_EXIST=false
             fi
-          }
-          
-          EXIT_CODE=0
-          check_file "and_gate.v" "AND Gate"
-          check_file "blinky.vcd" "LED Blinker"
-          check_file "counter.v" "Up Counter"
-          check_file "uart_rx.v" "UART Receiver"
-          check_file "uart_sim.vcd" "UART Simulation"
-          check_file "blinker_system.v" "Controlled Blinker"
-          check_file "blinker_system.vcd" "Blinker Simulation"
+          done
           
           cat summary.md
-          exit $EXIT_CODE
+          
+          if [ "$ALL_FILES_EXIST" = "false" ]; then
+            exit 1
+          fi
 
       - name: Archive generated files
         uses: actions/upload-artifact@v4
         with:
-          name: tutorial-outputs
+          name: tutorial-${{ matrix.example.name }}-output
           path: |
             *.v
             *.vcd
             summary.md
+            
+  collect-results:
+    name: Collect Test Results
+    runs-on: ubuntu-latest
+    needs: test-tutorial
+    if: always()
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          
+      - name: Generate combined summary
+        run: |
+          echo "## Tutorial Code Test Results" > combined_summary.md
+          echo "| Example | Status |" >> combined_summary.md
+          echo "|---------|--------|" >> combined_summary.md
+          
+          # Process each example's summary
+          for dir in artifacts/tutorial-*-output; do
+            example=$(basename "$dir" | sed 's/tutorial-\(.*\)-output/\1/')
+            
+            if grep -q "❌ Fail" "$dir/summary.md"; then
+              status="❌ Fail"
+            else
+              status="✅ Pass"
+            fi
+            
+            echo "| $example | $status |" >> combined_summary.md
+          done
+          
+          echo "Combined Summary:"
+          cat combined_summary.md
+          
+          # Fail if any example failed
+          if grep -q "❌ Fail" combined_summary.md; then
+            exit 1
+          fi
+          
+      - name: Archive combined summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: tutorial-test-summary
+          path: combined_summary.md

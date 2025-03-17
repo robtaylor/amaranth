@@ -53,7 +53,7 @@ if __name__ == "__main__":
         # Check if running in CI environment - run much shorter if so
         import os
         if os.environ.get("CI", "false").lower() == "true":
-            sim.run_until(1_000)  # Run for just 1μs in CI
+            sim.run_until(100)  # Run for just 100ns in CI
         else:
             sim.run_until(100 * 1_000_000)  # Run for 100ms of simulated time
 
