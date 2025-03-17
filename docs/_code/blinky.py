@@ -28,7 +28,12 @@ class Blinky(Elaboratable):
         # Connect LED to the most significant bit of the timer
         # timer[-1] means "the last bit" (most significant bit)
         # This makes the LED toggle on/off when the timer overflows
-        m.d.comb += led.o.eq(timer[-1])
+        if hasattr(led, 'o'):
+            # Hardware case where led is a platform pin
+            m.d.comb += led.o.eq(timer[-1]) 
+        else:
+            # Simulation case where led is just a Signal
+            m.d.comb += led.eq(timer[-1])
         
         return m
 
