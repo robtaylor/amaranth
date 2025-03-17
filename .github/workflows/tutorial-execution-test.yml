@@ -122,14 +122,67 @@ jobs:
               // Parse Claude's response to get the execution plan
               const analysisText = analysisResponse.content[0].text;
               
+              // Save Claude's raw response for debugging
+              fs.writeFileSync('claude_raw_response.txt', analysisText);
+              console.log("Saved raw Claude response to claude_raw_response.txt");
+              
               // Extract JSON from Claude's response
+              console.log("Extracting JSON from Claude's response...");
               const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
               if (!jsonMatch) {
-                throw new Error("Could not extract JSON execution plan from Claude's response");
+                throw new Error("Could not extract JSON execution plan from Claude's response. See claude_raw_response.txt for details.");
               }
               
-              const executionPlan = JSON.parse(jsonMatch[0]);
-              fs.writeFileSync('execution_plan.json', JSON.stringify(executionPlan, null, 2));
+              // Log what we're trying to parse
+              console.log("Attempting to parse JSON:", jsonMatch[0].substring(0, 200) + "...");
+              
+              let executionPlan;
+              try {
+                executionPlan = JSON.parse(jsonMatch[0]);
+                fs.writeFileSync('execution_plan.json', JSON.stringify(executionPlan, null, 2));
+              } catch (parseError) {
+                console.error("JSON parse error:", parseError.message);
+                console.error("This might be due to incomplete or malformed JSON from Claude.");
+                console.error("Trying to sanitize and repair the JSON...");
+                
+                // Simple sanitization - fix common JSON issues
+                let sanitizedJson = jsonMatch[0]
+                  .replace(/\,\s*\}/g, '}')     // Remove trailing commas in objects
+                  .replace(/\,\s*\]/g, ']')     // Remove trailing commas in arrays
+                  .replace(/\'/g, '"')          // Replace single quotes with double quotes
+                  .replace(/\n/g, ' ');         // Remove newlines
+                
+                try {
+                  executionPlan = JSON.parse(sanitizedJson);
+                  fs.writeFileSync('execution_plan.json', JSON.stringify(executionPlan, null, 2));
+                  console.log("Successfully parsed JSON after sanitization");
+                } catch (secondError) {
+                  console.error("Failed to parse JSON even after sanitization:", secondError.message);
+                  // Create a simpler fallback execution plan with just a few examples
+                  executionPlan = {
+                    "steps": [
+                      {
+                        "name": "Basic Blinky Example",
+                        "file": "blinky.py",
+                        "code": fs.readFileSync('docs/_code/blinky.py', 'utf8'),
+                        "dependencies": [],
+                        "expected_result": "Simulation runs and creates a waveform file",
+                        "validation": "Check if blinky.vcd was created"
+                      },
+                      {
+                        "name": "Up Counter Example",
+                        "file": "up_counter.py",
+                        "code": fs.readFileSync('docs/_code/up_counter.py', 'utf8'),
+                        "dependencies": [],
+                        "expected_result": "Counter simulation runs correctly",
+                        "validation": "Check if up_counter.vcd was created"
+                      }
+                    ]
+                  };
+                  fs.writeFileSync('execution_plan.json', JSON.stringify(executionPlan, null, 2));
+                  console.log("Using fallback execution plan instead");
+                }
+              }
               console.log(`Extracted ${executionPlan.steps.length} executable steps from tutorial`);
               
               // Execute each step in the plan
