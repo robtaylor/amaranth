@@ -193,6 +193,8 @@ jobs:
 
   publish-docs-dev:
     needs: document
+    permissions:
+      contents: write
     if: ${{ github.repository != 'amaranth-lang/amaranth' }}
     runs-on: ubuntu-latest
     steps:
