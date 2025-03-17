@@ -76,9 +76,9 @@ if __name__ == "__main__":
         # Check if running in CI environment - run much shorter if so
         import os
         if os.environ.get("CI", "false").lower() == "true":
-            sim.run_until(100)  # Run for just 100ns in CI
+            sim.run_until(Period(ns=100))  # Run for just 100ns in CI
         else:
-            sim.run_until(2_000_000)  # 2M ns = 2 seconds
+            sim.run_until(Period(ms=2000))  # 2 seconds of simulated time
         
     print("Simulation complete. View waveform with 'gtkwave blinker_system.vcd'")
     
