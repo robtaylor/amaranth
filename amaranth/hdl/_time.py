@@ -24,6 +24,57 @@ _FREQUENCY_UNITS = {
 
 
 class Period:
+    """
+    Class representing a time period or frequency.
+    
+    This class is used to specify simulation timings with well-defined units. A Period 
+    object can be constructed by specifying either a time interval or a frequency.
+    
+    Time units:
+    * s - seconds
+    * ms - milliseconds
+    * us - microseconds
+    * ns - nanoseconds
+    * ps - picoseconds
+    * fs - femtoseconds
+    
+    Frequency units:
+    * Hz - hertz
+    * kHz - kilohertz
+    * MHz - megahertz
+    * GHz - gigahertz
+    
+    Parameters
+    ----------
+    **kwargs
+        A single keyword argument, either a time unit or a frequency unit.
+        Examples: ``Period(ns=10)``, ``Period(MHz=100)``
+    
+    Examples
+    --------
+    Create a period representing 10 nanoseconds:
+    
+    >>> Period(ns=10)
+    Period(ns=10)
+    
+    Create a period representing a 100 MHz clock:
+    
+    >>> Period(MHz=100)
+    Period(ns=10)
+    
+    Use with simulator:
+    
+    >>> sim = Simulator(dut)
+    >>> sim.add_clock(Period(MHz=1))  # 1 MHz clock
+    >>> sim.run_until(Period(ms=10))  # Run for 10 milliseconds
+    
+    Arithmetic operations:
+    
+    >>> Period(ns=10) + Period(ns=5)
+    Period(ns=15)
+    >>> Period(ns=10) * 2
+    Period(ns=20)
+    """
     def __init__(self, **kwargs):
         if not kwargs:
             self._femtoseconds = 0
@@ -53,26 +104,32 @@ class Period:
 
     @property
     def seconds(self):
+        """Get the period value in seconds."""
         return self._femtoseconds / 1_000_000_000_000_000
 
     @property
     def milliseconds(self):
+        """Get the period value in milliseconds."""
         return self._femtoseconds / 1_000_000_000_000
 
     @property
     def microseconds(self):
+        """Get the period value in microseconds."""
         return self._femtoseconds / 1_000_000_000
 
     @property
     def nanoseconds(self):
+        """Get the period value in nanoseconds."""
         return self._femtoseconds / 1_000_000
 
     @property
     def picoseconds(self):
+        """Get the period value in picoseconds."""
         return self._femtoseconds / 1_000
 
     @property
     def femtoseconds(self):
+        """Get the period value in femtoseconds."""
         return self._femtoseconds
 
     def _check_reciprocal(self):
@@ -83,21 +140,25 @@ class Period:
 
     @property
     def hertz(self):
+        """Get the frequency in hertz."""
         self._check_reciprocal()
         return 1_000_000_000_000_000 / self._femtoseconds
 
     @property
     def kilohertz(self):
+        """Get the frequency in kilohertz."""
         self._check_reciprocal()
         return 1_000_000_000_000 / self._femtoseconds
 
     @property
     def megahertz(self):
+        """Get the frequency in megahertz."""
         self._check_reciprocal()
         return 1_000_000_000 / self._femtoseconds
 
     @property
     def gigahertz(self):
+        """Get the frequency in gigahertz."""
         self._check_reciprocal()
         return 1_000_000 / self._femtoseconds
 
@@ -147,16 +208,19 @@ class Period:
         return Period(fs=abs(self._femtoseconds))
 
     def __add__(self, other):
+        """Add two Period objects together."""
         if not isinstance(other, Period):
             return NotImplemented
         return Period(fs=self._femtoseconds + other._femtoseconds)
 
     def __sub__(self, other):
+        """Subtract another Period object from this one."""
         if not isinstance(other, Period):
             return NotImplemented
         return Period(fs=self._femtoseconds - other._femtoseconds)
 
     def __mul__(self, other):
+        """Multiply a Period by a real number."""
         if not isinstance(other, numbers.Real):
             return NotImplemented
         return Period(fs=self._femtoseconds * other)
@@ -164,6 +228,12 @@ class Period:
     __rmul__ = __mul__
 
     def __truediv__(self, other):
+        """
+        Divide this Period.
+        
+        When dividing by another Period, returns a real number.
+        When dividing by a real number, returns a new Period.
+        """
         if isinstance(other, Period):
             return self._femtoseconds / other._femtoseconds
         elif isinstance(other, numbers.Real):

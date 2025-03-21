@@ -1,0 +1,322 @@
+name: Tutorial Execution Test with Claude
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/tutorial.rst'
+      - 'docs/_code/**'
+      - '.github/workflows/tutorial-execution-test.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'docs/tutorial.rst'
+      - 'docs/_code/**'
+      - '.github/workflows/tutorial-execution-test.yml'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  execute-tutorial:
+    name: Execute Tutorial with Claude
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python and Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Install Anthropic SDK
+        run: npm install @anthropic-ai/sdk
+      
+      - name: Set up Python and PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: '3.9'
+          cache: true
+          cache-dependency-path: "**/pyproject.toml"
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gtkwave
+          pdm install
+
+      - name: Create tutorial execution script
+        run: |
+          cat > execute_tutorial.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          const { exec, execSync } = require('child_process');
+          const Anthropic = require('@anthropic-ai/sdk');
+          const util = require('util');
+          const execAsync = util.promisify(exec);
+          
+          // Helper function to get code from a file reference
+          function getCodeFromFileRef(fileRef) {
+            const filePath = path.join('docs', fileRef);
+            if (fs.existsSync(filePath)) {
+              return fs.readFileSync(filePath, 'utf8');
+            }
+            return null;
+          }
+
+          // Initialize Anthropic client
+          const anthropic = new Anthropic({
+            apiKey: process.env.ANTHROPIC_API_KEY,
+          });
+
+          async function executeTutorial() {
+            // Read the tutorial content
+            const tutorialContent = fs.readFileSync('docs/tutorial.rst', 'utf8');
+            
+            // First, have Claude analyze the tutorial and extract executable steps
+            const analysisPrompt = `<tutorial>
+          ${tutorialContent}
+          </tutorial>
+
+          You are an expert in hardware design, HDLs, and Python. Please analyze the above Amaranth HDL tutorial (in RST format) and extract a step-by-step execution plan.
+
+          Note that this is a Sphinx RST file, with code examples in these forms:
+          1. Inline code blocks (marked with .. code-block:: python)
+          2. File includes (marked with .. literalinclude:: _code/filename.py)
+          
+          For each executable code example in the tutorial:
+          1. Identify the filename it should be saved as (from literalinclude or reasonable name for code blocks)
+          2. Extract the exact code needed for execution
+          3. Identify any dependencies or prerequisites needed to run this code
+          4. Describe what the expected output or result should be
+
+          Format your response in JSON like this:
+          {
+            "steps": [
+              {
+                "name": "Step description",
+                "file": "filename.py",
+                "code": "Python code goes here",
+                "dependencies": ["list", "of", "dependencies"],
+                "expected_result": "Description of expected output",
+                "validation": "How to verify it worked correctly"
+              }
+            ]
+          }
+
+          Only include steps that involve executing code. Focus on extracting the examples exactly as shown.`;
+
+            try {
+              console.log("Analyzing tutorial to extract executable steps...");
+              
+              // Call Claude to analyze the tutorial
+              const analysisResponse = await anthropic.messages.create({
+                model: "claude-3-7-sonnet-20250219",
+                max_tokens: 4000,
+                messages: [
+                  { role: "user", content: analysisPrompt }
+                ],
+                temperature: 0.2,
+              });
+              
+              // Parse Claude's response to get the execution plan
+              const analysisText = analysisResponse.content[0].text;
+              
+              // Save Claude's raw response for debugging
+              fs.writeFileSync('claude_raw_response.txt', analysisText);
+              console.log("Saved raw Claude response to claude_raw_response.txt");
+              
+              // Extract JSON from Claude's response
+              console.log("Extracting JSON from Claude's response...");
+              const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
+              if (!jsonMatch) {
+                throw new Error("Could not extract JSON execution plan from Claude's response. See claude_raw_response.txt for details.");
+              }
+              
+              // Log what we're trying to parse
+              console.log("Attempting to parse JSON:", jsonMatch[0].substring(0, 200) + "...");
+              
+              let executionPlan;
+              try {
+                executionPlan = JSON.parse(jsonMatch[0]);
+                fs.writeFileSync('execution_plan.json', JSON.stringify(executionPlan, null, 2));
+              } catch (parseError) {
+                console.error("JSON parse error:", parseError.message);
+                console.error("This might be due to incomplete or malformed JSON from Claude.");
+                console.error("Trying to sanitize and repair the JSON...");
+                
+                // Simple sanitization - fix common JSON issues
+                let sanitizedJson = jsonMatch[0]
+                  .replace(/\,\s*\}/g, '}')     // Remove trailing commas in objects
+                  .replace(/\,\s*\]/g, ']')     // Remove trailing commas in arrays
+                  .replace(/\'/g, '"')          // Replace single quotes with double quotes
+                  .replace(/\n/g, ' ');         // Remove newlines
+                
+                try {
+                  executionPlan = JSON.parse(sanitizedJson);
+                  fs.writeFileSync('execution_plan.json', JSON.stringify(executionPlan, null, 2));
+                  console.log("Successfully parsed JSON after sanitization");
+                } catch (secondError) {
+                  console.error("Failed to parse JSON even after sanitization:", secondError.message);
+                  // Create a simpler fallback execution plan with just a few examples
+                  executionPlan = {
+                    "steps": [
+                      {
+                        "name": "Basic Blinky Example",
+                        "file": "blinky.py",
+                        "code": fs.readFileSync('docs/_code/blinky.py', 'utf8'),
+                        "dependencies": [],
+                        "expected_result": "Simulation runs and creates a waveform file",
+                        "validation": "Check if blinky.vcd was created"
+                      },
+                      {
+                        "name": "Up Counter Example",
+                        "file": "up_counter.py",
+                        "code": fs.readFileSync('docs/_code/up_counter.py', 'utf8'),
+                        "dependencies": [],
+                        "expected_result": "Counter simulation runs correctly",
+                        "validation": "Check if up_counter.vcd was created"
+                      }
+                    ]
+                  };
+                  fs.writeFileSync('execution_plan.json', JSON.stringify(executionPlan, null, 2));
+                  console.log("Using fallback execution plan instead");
+                }
+              }
+              console.log(`Extracted ${executionPlan.steps.length} executable steps from tutorial`);
+              
+              // Execute each step in the plan
+              const results = [];
+              
+              for (let i = 0; i < executionPlan.steps.length; i++) {
+                const step = executionPlan.steps[i];
+                console.log(`\n==== Executing Step ${i+1}: ${step.name} ====`);
+                
+                // Check if we have this file already in docs/_code
+                const docFilePath = path.join('docs', '_code', step.file);
+                if (fs.existsSync(docFilePath)) {
+                  // Use the existing file from docs/_code
+                  const codeFromFile = fs.readFileSync(docFilePath, 'utf8');
+                  fs.writeFileSync(step.file, codeFromFile);
+                  console.log(`Using existing file from docs/_code/${step.file}`);
+                } else {
+                  // Save the code to a file as extracted by Claude
+                  fs.writeFileSync(step.file, step.code);
+                  console.log(`Created file from extraction: ${step.file}`);
+                }
+                
+                // Execute the code
+                try {
+                  console.log(`Running: pdm run python ${step.file}`);
+                  const { stdout, stderr } = await execAsync(`pdm run python ${step.file}`, { timeout: 60000 });
+                  
+                  // Record the result
+                  results.push({
+                    step: i+1,
+                    name: step.name,
+                    file: step.file,
+                    success: true,
+                    stdout,
+                    stderr,
+                    error: null
+                  });
+                  
+                  console.log("Output:", stdout);
+                  if (stderr) console.error("Errors:", stderr);
+                  
+                } catch (error) {
+                  console.error(`Error executing ${step.file}:`, error.message);
+                  
+                  // Record the failure
+                  results.push({
+                    step: i+1,
+                    name: step.name,
+                    file: step.file,
+                    success: false,
+                    stdout: error.stdout || "",
+                    stderr: error.stderr || "",
+                    error: error.message
+                  });
+                }
+              }
+              
+              // Save the execution results
+              fs.writeFileSync('execution_results.json', JSON.stringify(results, null, 2));
+              
+              // Have Claude analyze the results
+              const resultsPrompt = `
+          I've executed the code examples from an Amaranth HDL tutorial. Here are the results:
+          
+          ${JSON.stringify(results, null, 2)}
+          
+          Please analyze these results and provide:
+          
+          1. A summary of which examples worked and which failed
+          2. For failed examples, analyze what might have gone wrong based on error messages
+          3. Suggest possible improvements to the tutorial based on execution results
+          4. Overall assessment of the tutorial's executability for beginners
+          
+          Format your response with clear headings and bullet points.`;
+              
+              console.log("\nAnalyzing execution results with Claude...");
+              
+              const resultsAnalysisResponse = await anthropic.messages.create({
+                model: "claude-3-7-sonnet-20250219",
+                max_tokens: 4000,
+                messages: [
+                  { role: "user", content: resultsPrompt }
+                ],
+                temperature: 0.2,
+              });
+              
+              // Save Claude's analysis of the results
+              fs.writeFileSync('tutorial_execution_analysis.md', resultsAnalysisResponse.content[0].text);
+              console.log("Analysis complete. Results written to tutorial_execution_analysis.md");
+              
+              console.log("\n=== SUMMARY OF EXECUTION ANALYSIS ===\n");
+              console.log(resultsAnalysisResponse.content[0].text.substring(0, 1000) + "...");
+              
+            } catch (error) {
+              console.error("Error during execution:", error);
+              process.exit(1);
+            }
+          }
+
+          executeTutorial();
+          EOF
+          
+          chmod +x execute_tutorial.js
+
+      - name: Check ANTHROPIC_API_KEY is set
+        id: check_api_key
+        run: |
+          if [ -n "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+            echo "API key is set, proceeding with Claude execution test"
+            echo "has_api_key=true" >> $GITHUB_OUTPUT
+          else
+            echo "ANTHROPIC_API_KEY is not set. Skipping Claude-based execution."
+            echo "has_api_key=false" >> $GITHUB_OUTPUT
+            echo "## ⚠️ Warning - Claude Execution Test Skipped" >> $GITHUB_STEP_SUMMARY
+            echo "* ANTHROPIC_API_KEY secret is not configured in this repository" >> $GITHUB_STEP_SUMMARY
+            echo "* Execution test will be skipped for now" >> $GITHUB_STEP_SUMMARY
+            echo "* This test will run automatically once the secret is configured" >> $GITHUB_STEP_SUMMARY
+          fi
+            
+      - name: Execute tutorial with Claude
+        if: steps.check_api_key.outputs.has_api_key == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node execute_tutorial.js
+        
+      - name: Archive execution results
+        if: steps.check_api_key.outputs.has_api_key == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tutorial-execution-results
+          path: |
+            *.py
+            *.v
+            *.vcd
+            execution_plan.json
+            execution_results.json
+            tutorial_execution_analysis.md

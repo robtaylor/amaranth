@@ -5,7 +5,27 @@ from pdm.backend._vendor.packaging.version import Version
 
 
 def format_version(version: SCMVersion) -> str:
-    major, minor, patch = (int(n) for n in str(version.version).split(".")[:3])
+    # Split version parts and ensure we have at least 3 parts (major, minor, patch)
+    version_parts = str(version.version).split(".")
+    
+    # Handle the case with fewer than 3 version components
+    if len(version_parts) < 3:
+        if len(version_parts) == 1:
+            major = int(version_parts[0])
+            minor = 0
+            patch = 0
+        elif len(version_parts) == 2:
+            major = int(version_parts[0])
+            minor = int(version_parts[1])
+            patch = 0
+        else:
+            # This should never happen (length can't be < 1), but just in case
+            major = 0
+            minor = 0
+            patch = 0
+    else:
+        major, minor, patch = (int(n) for n in version_parts[:3])
+    
     dirty = f"+{datetime.utcnow():%Y%m%d.%H%M%S}" if version.dirty else ""
     if version.distance is None:
         return f"{major}.{minor}.{patch}{dirty}"

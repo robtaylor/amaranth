@@ -7,7 +7,6 @@ __pycache__/
 /.pdm-plugins
 /.pdm-python
 /.venv
-/pdm.lock
 
 # metadata schemas
 /schema

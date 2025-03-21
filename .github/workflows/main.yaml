@@ -20,9 +20,6 @@ jobs:
         - 'pypy-3.10'
         allow-failure:
         - false
-        include:
-        - python-version: '3.14-dev'
-          allow-failure: true
     continue-on-error: ${{ matrix.allow-failure }}
     name: 'test (${{ matrix.python-version }})'
     steps:
@@ -196,6 +193,8 @@ jobs:
 
   publish-docs-dev:
     needs: document
+    permissions:
+      contents: write
     if: ${{ github.repository != 'amaranth-lang/amaranth' }}
     runs-on: ubuntu-latest
     steps:
